@@ -11,5 +11,9 @@
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\BlazorIndexedOrm.MigrationBuilder\BlazorIndexedOrm.MigrationBuilder.csproj" />
+	</ItemGroup>
+
 
 </Project>

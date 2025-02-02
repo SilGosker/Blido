@@ -6,6 +6,11 @@ public class CompareToMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
+        if (expression.Object is not null)
+        {
+            processNext(expression.Object);
+        }
+
         builder.Append(".localCompare(");
         processNext(expression.Arguments[0]);
         builder.Append(')');

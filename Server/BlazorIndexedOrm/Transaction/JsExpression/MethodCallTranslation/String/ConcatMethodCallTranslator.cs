@@ -8,34 +8,45 @@ public class ConcatMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
-        if (expression.Arguments.Any(e => e.Type == typeof(object) || e.Type == typeof(ReadOnlySpan<char>)))
+        if (expression.Method.IsGenericMethod ||
+            expression.Arguments.Any(e => e.Type == typeof(object) || e.Type == typeof(object[])))
         {
             ThrowHelper.ThrowUnsupportedException(expression.Method);
         }
 
-        builder.Append('(');
-        bool first = true;
-        foreach (Expression expressionArgument in expression.Arguments)
+        if (expression.Arguments.Count == 1)
         {
-            if (!first)
+            processNext(expression.Arguments[0]);
+            builder.Append(".join('')");
+        }
+        else
+        {
+            builder.Append('(');
+            bool first = true;
+            foreach (Expression expressionArgument in expression.Arguments)
             {
-                builder.Append(" + ");
+                if (!first)
+                {
+                    builder.Append('+');
+                }
+
+                processNext(expressionArgument);
+                first = false;
             }
 
-            processNext(expressionArgument);
-            first = false;
+            builder.Append(')');
         }
-
-        builder.Append(')');
     };
-    #nullable disable
+
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
-        typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string), typeof(string), typeof(string) }),
+        typeof(string).GetMethod(nameof(string.Concat),
+            new[] { typeof(string), typeof(string), typeof(string), typeof(string) }),
         typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string), typeof(string) }),
         typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string) }),
         typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(IEnumerable<string>) }),
         typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string[]) }),
     };
-    #nullable restore
+#nullable restore
 }

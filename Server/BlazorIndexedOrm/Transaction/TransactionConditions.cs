@@ -1,10 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.JSInterop;
 
 namespace BlazorIndexedOrm.Core.Transaction;
 
 public class TransactionConditions<TEntity> where TEntity : class
 {
     private List<Func<TEntity, bool>>? _conditions = null;
+    public bool HasConditions => _conditions?.Count > 0;
     public void AddCondition(Expression<Func<TEntity, bool>> expression)
     {
         ArgumentNullException.ThrowIfNull(expression);
@@ -12,6 +14,7 @@ public class TransactionConditions<TEntity> where TEntity : class
         _conditions.Add(expression.Compile());
     }
 
+    [JSInvokable]
     public bool FullFillsConditions(TEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);

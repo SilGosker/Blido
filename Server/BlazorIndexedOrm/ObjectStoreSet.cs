@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Numerics;
-using BlazorIndexedOrm.Core.ObjectStore;
 using BlazorIndexedOrm.Core.Transaction;
 using BlazorIndexedOrm.Core.Transaction.Materialization;
 
@@ -17,7 +16,7 @@ public class ObjectStoreSet<TEntity> :
         ArgumentNullException.ThrowIfNull(provider);
 
         _provider = provider;
-        Name = ObjectStoreNameResolver.Resolve<TEntity>();
+        Name = NameResolver.ResolveObjectStoreName<TEntity>();
     }
 
     public ObjectStoreSet<TEntity> Where(Expression<Func<TEntity, bool>> expression)

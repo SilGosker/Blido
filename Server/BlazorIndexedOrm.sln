@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorIndexedOrm.Core.UnitTests.Mock", "BlazorIndexedOrm.Core.UnitTests.Mock\BlazorIndexedOrm.Core.UnitTests.Mock.csproj", "{2F7A9471-ECAB-4D70-8067-6B1E6EEDE167}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{BC8EDB44-0D87-40BC-8095-FE8B1A6CE5CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC8EDB44-0D87-40BC-8095-FE8B1A6CE5CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC8EDB44-0D87-40BC-8095-FE8B1A6CE5CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F7A9471-ECAB-4D70-8067-6B1E6EEDE167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F7A9471-ECAB-4D70-8067-6B1E6EEDE167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F7A9471-ECAB-4D70-8067-6B1E6EEDE167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F7A9471-ECAB-4D70-8067-6B1E6EEDE167}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +64,6 @@ Global
 		{D678C8E4-564D-4311-A2A6-B0B13372A459} = {88080981-3DFF-45BD-9784-FAFAA1E7A801}
 		{6A5845D5-8157-49C8-9F41-C5944869A4EA} = {88080981-3DFF-45BD-9784-FAFAA1E7A801}
 		{BC8EDB44-0D87-40BC-8095-FE8B1A6CE5CB} = {88080981-3DFF-45BD-9784-FAFAA1E7A801}
+		{2F7A9471-ECAB-4D70-8067-6B1E6EEDE167} = {32FEC368-B191-4E54-B7E2-5C45C462A099}
 	EndGlobalSection
 EndGlobal

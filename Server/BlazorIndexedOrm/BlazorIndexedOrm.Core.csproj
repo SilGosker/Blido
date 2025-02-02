@@ -6,15 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-
-	<ItemGroup>
-		<SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\BlazorIndexedOrm.Typescript\output\*.js" />
-	</ItemGroup>
-
-	<Target Name="CopyScriptsToProject" BeforeTargets="Build">
-		<Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\wwwroot\BlazorIndexedOrm\" />
-	</Target>
-
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
 	</ItemGroup>

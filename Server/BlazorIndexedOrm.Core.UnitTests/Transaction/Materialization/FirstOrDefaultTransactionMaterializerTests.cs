@@ -1,9 +1,7 @@
-﻿using BlazorIndexedOrm.Core.Transaction;
-using BlazorIndexedOrm.Core.Transaction.Materialization;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using Moq;
 
-namespace BlazorIndexedOrm.Core.UnitTests.Transaction.Materialization;
+namespace BlazorIndexedOrm.Core.Transaction.Materialization;
 
 public class FirstOrDefaultTransactionMaterializerTests
 {

@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using BlazorIndexedOrm.Core.Transaction;
 
-namespace BlazorIndexedOrm.Core.UnitTests.Transaction;
+namespace BlazorIndexedOrm.Core.Transaction;
 
 public class TransactionConditionsTests
 {

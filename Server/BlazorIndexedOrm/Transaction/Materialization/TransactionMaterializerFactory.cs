@@ -1,5 +1,4 @@
-﻿using BlazorIndexedOrm.Core.ObjectStore;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
 namespace BlazorIndexedOrm.Core.Transaction.Materialization;
 
@@ -23,7 +22,7 @@ public readonly struct TransactionMaterializerFactory<TEntity> where TEntity : c
         object? transactionProvider = methodName switch
         {
             nameof(ITransactionMaterializationProvider<TEntity>.FirstOrDefaultAsync) =>
-               new FirstOrDefaultTransactionMaterializer<TEntity>(_jsRuntime, _conditions, _database, ObjectStoreNameResolver.Resolve<TEntity>()),
+               new FirstOrDefaultTransactionMaterializer<TEntity>(_jsRuntime, _conditions, _database, NameResolver.ResolveObjectStoreName<TEntity>()),
             _ => null
         };
 

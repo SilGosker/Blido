@@ -25,7 +25,14 @@ public readonly struct FirstOrDefaultTransactionMaterializer<TEntity> : ITransac
     {
         var version = await _database.GetVersionAsync();
 
-        var result = await _jsRuntime.InvokeAsync<TEntity>(JsMethodNameConstants.FirstOrDefault, cancellationToken, _database.Name, _objectStore, version, _conditions);
+        DotNetObjectReference<TransactionConditions<TEntity>>? transactionReference = null;
+
+        if (_conditions.HasConditions)
+        {
+            transactionReference = DotNetObjectReference.Create(_conditions);
+        }
+
+        var result = await _jsRuntime.InvokeAsync<TEntity>(JsMethodNameConstants.FirstOrDefault, cancellationToken, _database.Name, _objectStore, version, transactionReference);
         return result;
     }
 }

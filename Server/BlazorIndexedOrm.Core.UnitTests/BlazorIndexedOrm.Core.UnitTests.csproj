@@ -7,6 +7,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+	<RootNamespace>BlazorIndexedOrm.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,11 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorIndexedOrm\BlazorIndexedOrm.Core.csproj" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorIndexedOrm.Core.UnitTests.Mock\BlazorIndexedOrm.Core.UnitTests.Mock.csproj" />
   </ItemGroup>
 
 </Project>

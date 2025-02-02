@@ -1,9 +1,8 @@
 ﻿using System.Linq.Expressions;
-using BlazorIndexedOrm.Core.Transaction;
 using Microsoft.JSInterop;
 using Moq;
 
-namespace BlazorIndexedOrm.Core.UnitTests.Transaction;
+namespace BlazorIndexedOrm.Core.Transaction;
 
 public class IndexedDbTransactionProviderTests
 {

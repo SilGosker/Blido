@@ -3,7 +3,7 @@ using BlazorIndexedOrm.Core.UnitTests.Mock.IndexedDbDatabase;
 using Microsoft.JSInterop;
 using Moq;
 
-namespace BlazorIndexedOrm.Core.UnitTests;
+namespace BlazorIndexedOrm.Core;
 
 public class IndexedDbDatabaseTests
 {

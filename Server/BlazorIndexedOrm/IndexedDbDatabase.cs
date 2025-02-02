@@ -16,22 +16,9 @@ public abstract class IndexedDbDatabase
     {
         ArgumentNullException.ThrowIfNull(jsRuntime);
         _jsRuntime = jsRuntime;
-        Name = FindDatabaseName();
+        Name = NameResolver.ResolveIndexedDbStoreName(GetType());
         _versionTask = _jsRuntime.InvokeAsync<ulong>(JsMethodNameConstants.GetVersion, Name);
         InitializeObjectStores();
-    }
-
-    private string FindDatabaseName()
-    {
-        var type = GetType();
-        var databaseNameAttribute = type.GetCustomAttribute<IndexedDbDatabaseNameAttribute>();
-
-        if (databaseNameAttribute is not null)
-        {
-            return databaseNameAttribute.Name;
-        }
-
-        return type.Name;
     }
 
     private void InitializeObjectStores()

@@ -1,10 +1,12 @@
-import { firstOrDefaultInterface, firstOrDefault } from "./firstOrDefault";
+import { FirstOrDefaultInterface, firstOrDefault } from "./materializers/firstOrDefault";
+import {GetVersionInterface, getVersion} from "./getVersion";
 
 class BlazorOrmContext {
-    private firstOrDefault: firstOrDefaultInterface
-
+    public firstOrDefault: FirstOrDefaultInterface
+    public getVersion : GetVersionInterface
     public constructor() {
         this.firstOrDefault = firstOrDefault;
+        this.getVersion = getVersion;
     }
 }
 

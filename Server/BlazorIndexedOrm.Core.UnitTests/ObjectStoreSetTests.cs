@@ -2,7 +2,7 @@
 using BlazorIndexedOrm.Core.Transaction;
 using Moq;
 
-namespace BlazorIndexedOrm.Core.UnitTests;
+namespace BlazorIndexedOrm.Core;
 
 public class ObjectStoreSetTests
 {

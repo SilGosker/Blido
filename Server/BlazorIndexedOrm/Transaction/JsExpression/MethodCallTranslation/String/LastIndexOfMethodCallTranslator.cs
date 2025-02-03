@@ -22,6 +22,8 @@ public class LastIndexOfMethodCallTranslator : IMethodCallTranslator
             return;
         }
 
+        processNext(expression.Object!);
+
         bool ignoreCase = false;
         if (expression.Arguments.Count > 1)
         {
@@ -42,31 +44,32 @@ public class LastIndexOfMethodCallTranslator : IMethodCallTranslator
         }
 
         sb.Append(".lastIndexOf(");
+        processNext(expression.Arguments[0]);
 
         if (ignoreCase)
         {
-            processNext(expression.Arguments[0]);
             sb.Append(".toUpperCase()");
         }
 
-        if (expression.Arguments.Count > 1)
+        if (expression.Arguments.Count > 1 && expression.Arguments[1].Type == typeof(int))
         {
-            sb.Append(", ");
+            sb.Append(',');
             processNext(expression.Arguments[1]);
         }
 
         sb.Append(')');
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
-        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] {typeof(char)}),
-        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] {typeof(string) }),
-        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] {typeof(char), typeof(int)}),
-        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] {typeof(string), typeof(int)}),
-        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] {typeof(string), typeof(StringComparison)}),
-        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] {typeof(string), typeof(int), typeof(StringComparison)}),
+        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] { typeof(char) }),
+        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] { typeof(string) }),
+        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] { typeof(char), typeof(int) }),
+        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] { typeof(string), typeof(int) }),
+        typeof(string).GetMethod(nameof(string.LastIndexOf), new Type[] { typeof(string), typeof(StringComparison) }),
+        typeof(string).GetMethod(nameof(string.LastIndexOf),
+            new Type[] { typeof(string), typeof(int), typeof(StringComparison) }),
     };
-    #nullable restore
+#nullable restore
 }

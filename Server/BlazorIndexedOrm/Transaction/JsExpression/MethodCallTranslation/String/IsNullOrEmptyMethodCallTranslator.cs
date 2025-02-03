@@ -6,7 +6,7 @@ public class IsNullOrEmptyMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, methodCall, processNext) =>
     {
-        builder.Append("!!(");
+        builder.Append("(!!");
         processNext(methodCall.Arguments[0]);
         builder.Append(')');
     };

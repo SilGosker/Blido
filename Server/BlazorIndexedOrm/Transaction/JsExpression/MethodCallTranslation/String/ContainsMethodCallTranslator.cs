@@ -8,6 +8,11 @@ public class ContainsMethodCallTranslator : IMethodCallTranslator
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
         bool ignoreCase = false;
+        if (expression.Object is not null)
+        {
+            processNext(expression.Object);
+        }
+
         if (expression.Arguments.Count == 2)
         {
             if (CaseInsensitivityHelper.IsCaseInsensitive(expression.Arguments[1]))

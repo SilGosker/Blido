@@ -7,6 +7,11 @@ public class EndsWithMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processExpression) =>
     {
+        if (expression.Object is not null)
+        {
+            processExpression(expression.Object);
+        }
+
         bool ignoreCase = false;
         if (expression.Arguments.Count == 2)
         {

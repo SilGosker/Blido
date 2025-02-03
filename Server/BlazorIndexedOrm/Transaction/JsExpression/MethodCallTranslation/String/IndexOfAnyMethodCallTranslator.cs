@@ -12,10 +12,13 @@ public class IndexOfAnyMethodCallTranslator : IMethodCallTranslator
             ThrowHelper.ThrowUnsupportedException(expression.Method);
         }
 
-        builder.Append(".split().findIndex(z=>");
+        processNext(expression.Object!);
+
+        builder.Append(".split('').findIndex(_x=>");
         processNext(expression.Arguments[0]);
-        builder.Append(".contains(z))");
+        builder.Append(".contains(_x))");
     };
+
     #nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {

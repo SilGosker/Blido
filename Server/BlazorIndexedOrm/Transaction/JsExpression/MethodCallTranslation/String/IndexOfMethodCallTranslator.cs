@@ -22,6 +22,8 @@ public class IndexOfMethodCallTranslator : IMethodCallTranslator
             return;
         }
 
+        processNext(expression.Object!);
+
         bool ignoreCase = false;
         if (expression.Arguments.Count > 1)
         {
@@ -43,15 +45,15 @@ public class IndexOfMethodCallTranslator : IMethodCallTranslator
 
         sb.Append(".indexOf(");
 
+        processNext(expression.Arguments[0]);
         if (ignoreCase)
         {
-            processNext(expression.Arguments[0]);
             sb.Append(".toUpperCase()");
         }
 
-        if (expression.Arguments.Count > 1)
+        if (expression.Arguments.Count > 1 && expression.Arguments[1].Type == typeof(int))
         {
-            sb.Append(", ");
+            sb.Append(',');
             processNext(expression.Arguments[1]);
         }
 

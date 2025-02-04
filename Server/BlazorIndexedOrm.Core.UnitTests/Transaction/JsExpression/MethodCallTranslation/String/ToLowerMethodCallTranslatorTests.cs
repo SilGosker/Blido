@@ -42,7 +42,7 @@ public class ToLowerMethodCallTranslatorTests
     }
 
     [Fact]
-    public void TranslateMethodCall_WithCultureInfo_ShouldAppendToLocalLowerCase()
+    public void TranslateMethodCall_WithCultureInfo_ShouldAppendToLocaleLowerCase()
     {
         // Arrange
         var method = typeof(string).GetMethod(nameof(string.ToLower), new Type[] { typeof(CultureInfo) })!;
@@ -67,6 +67,6 @@ public class ToLowerMethodCallTranslatorTests
         ToLowerMethodCallTranslator.TranslateMethodCall(stringBuilder, expression, processExpression);
 
         // Assert
-        Assert.Equal("\"base\".toLocalLowerCase(\"en\")", stringBuilder.ToString());
+        Assert.Equal("\"base\".toLocaleLowerCase(\"en\")", stringBuilder.ToString());
     }
 }

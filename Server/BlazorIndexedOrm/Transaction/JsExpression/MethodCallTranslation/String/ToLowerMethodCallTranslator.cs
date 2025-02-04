@@ -14,7 +14,7 @@ public class ToLowerMethodCallTranslator : IMethodCallTranslator
             return;
         }
 
-        builder.Append(".toLocalLowerCase(");
+        builder.Append(".toLocaleLowerCase(");
         processNext(expression.Arguments[0]);
         builder.Append(')');
     };

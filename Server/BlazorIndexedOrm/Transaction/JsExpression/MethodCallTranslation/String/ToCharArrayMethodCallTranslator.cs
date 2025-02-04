@@ -6,6 +6,7 @@ public class ToCharArrayMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processExpression) =>
     {
+        processExpression(expression.Object!);
         sb.Append(".split('')");
     };
 

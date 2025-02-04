@@ -9,10 +9,10 @@ public class TrimStartMethodCallTranslator : IMethodCallTranslator
         sb.Append(".trimStart()");
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.TrimStart), Array.Empty<Type>())!
     };
-    #nullable restore
+#nullable restore
 }

@@ -10,10 +10,11 @@ public class IsNullOrEmptyMethodCallTranslator : IMethodCallTranslator
         processNext(methodCall.Arguments[0]);
         builder.Append(')');
     };
-    #nullable disable
+
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.IsNullOrEmpty), new[] { typeof(string) })
     };
-    #nullable restore
+#nullable restore
 }

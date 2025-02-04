@@ -7,11 +7,6 @@ public class IndexOfAnyMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
-        if (expression.Arguments.Count != 1)
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-        }
-
         processNext(expression.Object!);
 
         builder.Append(".split('').findIndex(_x=>");

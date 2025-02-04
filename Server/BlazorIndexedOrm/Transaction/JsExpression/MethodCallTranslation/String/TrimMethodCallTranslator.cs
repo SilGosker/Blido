@@ -14,10 +14,10 @@ public class TrimMethodCallTranslator : IMethodCallTranslator
         }
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.Trim), Array.Empty<Type>())
     };
-    #nullable restore
+#nullable restore
 }

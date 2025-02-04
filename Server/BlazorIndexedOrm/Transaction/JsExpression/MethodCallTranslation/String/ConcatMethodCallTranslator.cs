@@ -8,12 +8,6 @@ public class ConcatMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
-        if (expression.Method.IsGenericMethod ||
-            expression.Arguments.Any(e => e.Type == typeof(object) || e.Type == typeof(object[])))
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-        }
-
         if (expression.Arguments.Count == 1)
         {
             processNext(expression.Arguments[0]);

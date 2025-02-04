@@ -13,14 +13,15 @@ public class SubStringMethodCallTranslator : IMethodCallTranslator
             sb.Append(", ");
             processExpression(expression.Arguments[1]);
         }
+
         sb.Append(')');
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.Substring), new[] { typeof(int) }),
         typeof(string).GetMethod(nameof(string.Substring), new[] { typeof(int), typeof(int) })
     };
-    #nullable restore
+#nullable restore
 }

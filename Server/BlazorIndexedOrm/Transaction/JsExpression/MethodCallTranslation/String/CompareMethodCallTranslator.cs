@@ -9,12 +9,6 @@ public class CompareMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
-        if (expression.Arguments.Any(e => e.Type == typeof(int))
-            || expression.Arguments.Count == 4 && expression.Arguments[3].Type == typeof(CompareOptions))
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-        }
-
         processNext(expression.Arguments[0]);
         builder.Append(".localeCompare(");
         processNext(expression.Arguments[1]);

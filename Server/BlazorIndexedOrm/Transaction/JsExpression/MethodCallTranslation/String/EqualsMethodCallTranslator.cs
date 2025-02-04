@@ -29,14 +29,16 @@ public class EqualsMethodCallTranslator : IMethodCallTranslator
             : 0]);
         builder.Append(')');
     };
-    #nullable disable
+
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(object) }),
         typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(string) }),
         typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(string), typeof(string) }),
         typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(string), typeof(StringComparison) }),
-        typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(string), typeof(string), typeof(StringComparison)}),
+        typeof(string).GetMethod(nameof(string.Equals),
+            new[] { typeof(string), typeof(string), typeof(StringComparison) }),
     };
-    #nullable restore
+#nullable restore
 }

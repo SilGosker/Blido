@@ -27,15 +27,16 @@ public class StartsWithMethodCallTranslator : IMethodCallTranslator
         {
             builder.Append(".toUpperCase()");
         }
+
         builder.Append(')');
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.StartsWith), new[] { typeof(char) }),
         typeof(string).GetMethod(nameof(string.StartsWith), new[] { typeof(string) }),
         typeof(string).GetMethod(nameof(string.StartsWith), new[] { typeof(string), typeof(StringComparison) }),
     };
-    #nullable enable
+#nullable enable
 }

@@ -12,10 +12,10 @@ public class IsNullOrWhiteSpaceMethodCallTranslator : IMethodCallTranslator
         builder.Append(')');
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.IsNullOrWhiteSpace), new[] { typeof(string) })
     };
-    #nullable enable
+#nullable enable
 }

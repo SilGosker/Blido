@@ -18,11 +18,11 @@ public class ToUpperMethodCallTranslator : IMethodCallTranslator
         builder.Append(')');
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.ToUpper), Array.Empty<Type>()),
-        typeof(string).GetMethod(nameof(string.ToUpper), new Type[] { typeof(CultureInfo)})
+        typeof(string).GetMethod(nameof(string.ToUpper), new Type[] { typeof(CultureInfo) })
     };
-    #nullable restore
+#nullable restore
 }

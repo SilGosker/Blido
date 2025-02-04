@@ -8,11 +8,11 @@ public class TrimEndMethodCallTranslator : IMethodCallTranslator
     {
         sb.Append(".trimEnd()");
     };
-    
-    #nullable disable
+
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.TrimEnd), Array.Empty<Type>())!
     };
-    #nullable restore
+#nullable restore
 }

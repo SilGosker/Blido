@@ -7,10 +7,6 @@ public class ReplaceMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processExpression) =>
     {
-        if (expression.Arguments.Any(e => e.Type != typeof(char) && e.Type != typeof(string)))
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-        }
         processExpression(expression.Object!);
         sb.Append(".replaceAll(");
         processExpression(expression.Arguments[0]);

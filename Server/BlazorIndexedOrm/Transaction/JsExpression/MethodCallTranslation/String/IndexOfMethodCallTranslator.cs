@@ -7,21 +7,6 @@ public class IndexOfMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processNext) =>
     {
-        // IndexOf(string, int, int, StringComparison)
-        if (expression.Arguments.Count == 4)
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-            return;
-        }
-
-        // IndexOf(string, int, int)
-        // IndexOf(char, int, int)
-        if (expression.Arguments.Count == 3 && expression.Arguments[2].Type == typeof(int))
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-            return;
-        }
-
         processNext(expression.Object!);
 
         bool ignoreCase = false;

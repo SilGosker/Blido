@@ -6,10 +6,7 @@ public class IndexAtMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
-        if (expression.Object is not null)
-        {
-            processNext(expression.Object);
-        }
+        processNext(expression.Object!);
 
         builder.Append(".charAt(");
         processNext(expression.Arguments[0]);

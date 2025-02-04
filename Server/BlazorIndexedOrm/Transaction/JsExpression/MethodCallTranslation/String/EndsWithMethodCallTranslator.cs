@@ -7,10 +7,7 @@ public class EndsWithMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processExpression) =>
     {
-        if (expression.Object is not null)
-        {
-            processExpression(expression.Object);
-        }
+        processExpression(expression.Object!);
 
         bool ignoreCase = false;
         if (expression.Arguments.Count == 2)
@@ -36,11 +33,12 @@ public class EndsWithMethodCallTranslator : IMethodCallTranslator
         builder.Append(')');
     };
 
-    #nullable disable
-    public static MethodInfo[] SupportedMethods => new [] {
-        typeof(string).GetMethod(nameof(string.EndsWith), new [] { typeof(char) }),
-        typeof(string).GetMethod(nameof(string.EndsWith), new [] { typeof(string) }),
-        typeof(string).GetMethod(nameof(string.EndsWith), new [] { typeof(string), typeof(StringComparison) }),
+#nullable disable
+    public static MethodInfo[] SupportedMethods => new[]
+    {
+        typeof(string).GetMethod(nameof(string.EndsWith), new[] { typeof(char) }),
+        typeof(string).GetMethod(nameof(string.EndsWith), new[] { typeof(string) }),
+        typeof(string).GetMethod(nameof(string.EndsWith), new[] { typeof(string), typeof(StringComparison) }),
     };
-    #nullable restore
+#nullable restore
 }

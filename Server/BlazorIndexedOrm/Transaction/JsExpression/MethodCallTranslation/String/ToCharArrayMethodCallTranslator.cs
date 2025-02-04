@@ -9,10 +9,10 @@ public class ToCharArrayMethodCallTranslator : IMethodCallTranslator
         sb.Append(".split('')");
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
         typeof(string).GetMethod(nameof(string.ToCharArray), Array.Empty<Type>())!
     };
-    #nullable restore
+#nullable restore
 }

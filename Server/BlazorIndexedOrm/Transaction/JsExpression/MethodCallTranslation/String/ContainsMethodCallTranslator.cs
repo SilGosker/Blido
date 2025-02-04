@@ -7,12 +7,9 @@ public class ContainsMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
-        bool ignoreCase = false;
-        if (expression.Object is not null)
-        {
-            processNext(expression.Object);
-        }
+        processNext(expression.Object!);
 
+        bool ignoreCase = false;
         if (expression.Arguments.Count == 2)
         {
             if (CaseInsensitivityHelper.IsCaseInsensitive(expression.Arguments[1]))

@@ -14,14 +14,15 @@ public class PadRightMethodCallTranslator : IMethodCallTranslator
             sb.Append(',');
             processExpression(expression.Arguments[1]);
         }
+
         sb.Append(')');
     };
 
-    #nullable disable
+#nullable disable
     public static MethodInfo[] SupportedMethods => new[]
     {
-        typeof(string).GetMethod(nameof(string.PadRight), new[] {typeof(int)}),
-        typeof(string).GetMethod(nameof(string.PadRight), new[] {typeof(int), typeof(char)})
+        typeof(string).GetMethod(nameof(string.PadRight), new[] { typeof(int) }),
+        typeof(string).GetMethod(nameof(string.PadRight), new[] { typeof(int), typeof(char) })
     };
-    #nullable restore
+#nullable restore
 }

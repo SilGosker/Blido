@@ -7,21 +7,6 @@ public class LastIndexOfMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processNext) =>
     {
-        // LastIndexOf(string, int, int, StringComparison)
-        if (expression.Arguments.Count == 4)
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-            return;
-        }
-
-        // LastIndexOf(string, int, int)
-        // LastIndexOf(char, int, int)
-        if (expression.Arguments.Count == 3 && expression.Arguments[2].Type == typeof(int))
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-            return;
-        }
-
         processNext(expression.Object!);
 
         bool ignoreCase = false;

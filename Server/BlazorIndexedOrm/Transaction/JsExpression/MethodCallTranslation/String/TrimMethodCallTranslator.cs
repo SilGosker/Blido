@@ -5,13 +5,10 @@ namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation.S
 
 public class TrimMethodCallTranslator : IMethodCallTranslator
 {
-    public static TranslateMethodCall TranslateMethodCall => (builder, expression, _) =>
+    public static TranslateMethodCall TranslateMethodCall => (builder, expression, processExpression) =>
     {
+        processExpression(expression.Object!);
         builder.Append(".trim()");
-        if (expression.Arguments.Count > 0)
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-        }
     };
 
 #nullable disable

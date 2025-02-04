@@ -6,6 +6,7 @@ public class SubStringMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processExpression) =>
     {
+        processExpression(expression.Object!);
         sb.Append(".substring(");
         processExpression(expression.Arguments[0]);
         if (expression.Arguments.Count > 1)

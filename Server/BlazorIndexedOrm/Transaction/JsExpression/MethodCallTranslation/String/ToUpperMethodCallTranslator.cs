@@ -7,6 +7,7 @@ public class ToUpperMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processNext) =>
     {
+        processNext(expression.Object!);
         if (expression.Arguments.Count == 0)
         {
             builder.Append(".toUpperCase()");

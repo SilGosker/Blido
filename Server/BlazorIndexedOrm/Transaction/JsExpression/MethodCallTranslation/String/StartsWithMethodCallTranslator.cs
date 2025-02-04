@@ -7,6 +7,7 @@ public class StartsWithMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (builder, expression, processExpression) =>
     {
+        processExpression(expression.Object!);
         bool ignoreCase = false;
         if (expression.Arguments.Count == 2)
         {
@@ -15,10 +16,6 @@ public class StartsWithMethodCallTranslator : IMethodCallTranslator
                 builder.Append(".toUpperCase()");
                 ignoreCase = true;
             }
-        }
-        else if (expression.Arguments.Count == 3)
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
         }
 
         builder.Append(".startsWith(");

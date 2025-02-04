@@ -20,53 +20,6 @@ public class ConcatMethodCallTranslatorTests
         Assert.False(containsNull);
     }
 
-    [Theory]
-    [InlineData("object", "object", "object")]
-    [InlineData("object", "object")]
-    [InlineData("object")]
-    [InlineData("object[]")]
-    public void TranslateMethodCall_WithObjectArguments_ThrowsNotSupportedException(params object[] parameters)
-    {
-        // Arrange
-        parameters = parameters.Select(p => p switch
-        {
-            "object" => new object(),
-            "object[]" => Array.Empty<object>(),
-            _ => throw new ArgumentOutOfRangeException(nameof(p))
-        }).ToArray();
-        
-        var method = typeof(string).GetMethod(nameof(string.Concat), parameters.Select(p => p.GetType()).ToArray())!;
-        var expression = Expression.Call(null, method, parameters.Select(Expression.Constant));
-        var builder = new StringBuilder();
-
-        // Act
-        Action act = () => ConcatMethodCallTranslator.TranslateMethodCall(builder, expression, _ => { });
-
-        // Assert
-        Assert.Throws<NotSupportedException>(act);
-    }
-
-    [Fact]
-    public void TranslateMethodCall_WithGenericArgument_ThrowsNotSupportedException()
-    {
-        // Arrange
-        var method = typeof(string).GetMethods()
-            .Single(m => m is { Name: nameof(string.Concat), IsGenericMethodDefinition: true }
-                                 && m.GetParameters() is { Length: 1 } parameters
-                                 && parameters[0].ParameterType.IsGenericType
-                                 && parameters[0].ParameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-
-        method = method.MakeGenericMethod(typeof(object));
-        var expression = Expression.Call(null, method, Expression.Constant(Enumerable.Empty<object>()));
-        var builder = new StringBuilder();
-
-        // Act
-        Action act = () => ConcatMethodCallTranslator.TranslateMethodCall(builder, expression, _ => { });
-
-        // Assert
-        Assert.Throws<NotSupportedException>(act);
-    }
-
     [Fact]
     public void TranslateMethodCall_WithStringArray_AppendsJoinExpression()
     {

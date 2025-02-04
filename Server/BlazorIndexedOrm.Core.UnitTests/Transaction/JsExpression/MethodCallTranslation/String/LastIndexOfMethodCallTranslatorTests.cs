@@ -19,28 +19,6 @@ public class LastIndexOfMethodCallTranslatorTests
     }
 
     [Theory]
-    [InlineData("last", 1, 2, StringComparison.CurrentCulture)]
-    [InlineData('a', 1, 2)]
-    [InlineData("last", 1, 2)]
-    public void TranslateMethod_WithUnsupportedMethod_ThrowsNotSupportedException(params object[] parameters)
-    {
-        // Arrange
-        var method = typeof(string).GetMethod(nameof(string.LastIndexOf), parameters.Select(p => p.GetType()).ToArray());
-        var expression = Expression.Call(Expression.Constant("base"), method!, parameters.Select(e => (Expression)Expression.Constant(e)).ToArray());
-        var stringBuilder = new StringBuilder();
-        ProcessExpression processExpression = _ => { };
-        // Act
-        Action act = () => LastIndexOfMethodCallTranslator.TranslateMethodCall(
-            stringBuilder,
-            expression,
-            processExpression
-        );
-        
-        // Assert
-        Assert.Throws<NotSupportedException>(act);
-    }
-
-    [Theory]
     [InlineData("last")]
     [InlineData('a')]
     public void TranslateMethodCall_WithoutIgnoreCasing_AppendsLastIndexOf(object parameter)

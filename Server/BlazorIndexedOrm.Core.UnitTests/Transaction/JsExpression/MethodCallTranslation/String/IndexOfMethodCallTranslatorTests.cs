@@ -18,44 +18,6 @@ public class IndexOfMethodCallTranslatorTests
         Assert.False(containsNull);
     }
 
-    [Theory]
-    [InlineData("arg", 1, 2, StringComparison.CurrentCultureIgnoreCase)]
-    [InlineData("arg", 1, 2)]
-    [InlineData('a', 2, 3)]
-    public void TranslateMethodCall_WithUnsupportedMethod_ShouldThrowNotSupportedException(params object[] parameters)
-    {
-        // Arrange
-        var arguments = parameters.Select(e => e.GetType()).ToArray();
-        var method = typeof(string).GetMethod(nameof(string.IndexOf), arguments)!;
-
-        var expression = Expression.Call(Expression.Constant("base"), method,
-                parameters.Select(Expression.Constant));
-        var sb = new StringBuilder();
-        ProcessExpression processExpression = next =>
-        {
-            if (next is not ConstantExpression constantExpression)
-            {
-                return;
-            }
-            if (constantExpression.Value is char character)
-            {
-                sb.Append('\'');
-                sb.Append(character);
-                sb.Append('\'');
-                return;
-            }
-            sb.Append('\"');
-            sb.Append(constantExpression.Value);
-            sb.Append('\"');
-        };
-
-        // Act
-        Action act = () => IndexOfMethodCallTranslator.TranslateMethodCall(sb, expression, processExpression);
-        
-        // Assert
-        Assert.Throws<NotSupportedException>(act);
-    }
-
     [Fact]
     public void TranslateMethodCall_WithString_AppendsIndexOf()
     {

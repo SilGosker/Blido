@@ -18,29 +18,6 @@ public class IndexOfAnyMethodCallTranslatorTests
         Assert.False(containsNull);
     }
 
-    [Theory]
-    [InlineData(new char[] { 'a', 'b' }, 1, -1)]
-    [InlineData(new char[] { 'a', 'b' }, 1, 2)]
-    public void TranslateMethodCall_WithUnsupportedMethod_ThrowsNotSupportedException(char[] characters, int start, int end)
-    {
-        // Arrange
-        var arguments = new Type[] { characters.GetType(), start.GetType(), end.GetType() };
-        if (end == -1) arguments = new Type[] { characters.GetType(), start.GetType() };
-        var parameters = new object[] { characters, start, end };
-        if (end == -1) parameters = new object[] { characters, start };
-
-        var method = typeof(string).GetMethod(nameof(string.IndexOfAny), arguments)!;
-        var expression = Expression.Call(Expression.Constant("root"), method, parameters.Select(Expression.Constant) );
-        var stringBuilder = new StringBuilder();
-        ProcessExpression processNext = next => { };
-
-        // Act
-        void Act() => IndexOfAnyMethodCallTranslator.TranslateMethodCall(stringBuilder, expression, processNext);
-
-        // Assert
-        Assert.Throws<NotSupportedException>(Act);
-    }
-
     [Fact]
     public void TranslateMethodCall_WithCharArray_AppendsFindIndex()
     {

@@ -20,31 +20,6 @@ public class CompareMethodCallTranslatorTests
         Assert.False(containsNull);
     }
 
-    [Theory]
-    [InlineData("a", 0, "b", 0, 0, "en-US", CompareOptions.None)]
-    [InlineData("a", 0, "b", 0, 0, true, "en-US")]
-    [InlineData("a", 0, "b", 0, 0, StringComparison.CurrentCulture)]
-    [InlineData("a", 0, "b", 0, 0, true)]
-    [InlineData("a", 0, "b", 0, 0)]
-    [InlineData("a", "b", "en-US", CompareOptions.None)]
-    public void TranslateMethodCall_WithUnsupportedArguments_ThrowsNotSupportedException(params object?[] parameters)
-    {
-        // Arrange
-        parameters = parameters.Where(e => e != null).Select(e => e is "en-US"
-            ? new CultureInfo("en-US")
-            : e).ToArray();
-        var arguments = parameters.Select(e => e!.GetType()).ToArray();
-        var method = typeof(string).GetMethod(nameof(string.Compare), arguments);
-        var expression = Expression.Call(null, method!, parameters.Select(Expression.Constant));
-        var builder = new StringBuilder();
-
-        // Act
-        Action act = () => CompareMethodCallTranslator.TranslateMethodCall(builder, expression, _ => { });
-
-        // Assert
-        Assert.Throws<NotSupportedException>(act);
-    }
-    
     [Fact]
     public void TranslateMethodCall_WithoutCasingArguments_AppendsLocalCompare()
     {

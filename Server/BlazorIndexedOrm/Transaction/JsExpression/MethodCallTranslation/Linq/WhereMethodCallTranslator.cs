@@ -1,22 +1,18 @@
-﻿using System.Linq.Expressions;
-using BlazorIndexedOrm.Core.Helpers;
+﻿using System.Reflection;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation.Linq;
 
-public class WhereMethodCallTranslator
+public class WhereMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processNext) =>
     {
-        var lambda = (LambdaExpression)expression.Arguments[0];
-
-        if (lambda.Parameters.Count != 1)
-        {
-            ThrowHelper.ThrowUnsupportedException(expression.Method);
-        }
-
-        sb.Append(".filter(");
         processNext(expression.Arguments[0]);
+        sb.Append(".filter(");
+        processNext(expression.Arguments[1]);
         sb.Append(')');
     };
 
+    public static MethodInfo[] SupportedMethods => typeof(Enumerable)
+        .GetMethods()
+        .Where(e => e.Name == nameof(Enumerable.Where)).ToArray();
 }

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
+﻿namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 
 public class MethodInfoEqualityComparerTests
 {
@@ -92,9 +90,9 @@ public class MethodInfoEqualityComparerTests
     {
         // Arrange
         var sut = new MethodInfoEqualityComparer();
-        var left = typeof(Enumerable).GetMethods()
+        var left = typeof(System.Linq.Enumerable).GetMethods()
             .First().MakeGenericMethod(typeof(int));
-        var right = typeof(Enumerable).GetMethods().First();
+        var right = typeof(System.Linq.Enumerable).GetMethods().First();
         
         // Act
         var result = sut.Equals(left, right);

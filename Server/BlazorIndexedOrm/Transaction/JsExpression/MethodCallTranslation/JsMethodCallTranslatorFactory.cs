@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
 using System.Reflection;
+using BlazorIndexedOrm.Core.Helpers;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 
-public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory, IReadOnlyDictionary<MethodInfo, TranslateMethodCall>
+public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory
 {
     private IReadOnlyDictionary<MethodInfo, TranslateMethodCall> _translators;
 
@@ -40,10 +41,7 @@ public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory, IRe
 
     public void AddCustomMethodTranslator(MethodInfo method, TranslateMethodCall translateMethod)
     {
-        if (_translators is not Dictionary<MethodInfo, TranslateMethodCall> dict)
-        {
-           throw new InvalidOperationException("Cannot add custom Method translator after configuration.");
-        }
+        ThrowHelper.ThrowConfirmedDictionaryException(_translators, out Dictionary<MethodInfo, TranslateMethodCall> dict);
         dict[method] = translateMethod;
     }
 

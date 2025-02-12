@@ -1,11 +1,20 @@
-﻿namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation.Linq;
+﻿using System.Reflection;
 
-public class AllMethodCallTranslator
+namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation.Linq;
+
+public class AllMethodCallTranslator : IMethodCallTranslator
 {
     public static TranslateMethodCall TranslateMethodCall => (sb, expression, processNext) =>
     {
-        sb.Append(".every(");
         processNext(expression.Arguments[0]);
+        sb.Append(".every(");
+        processNext(expression.Arguments[1]);
         sb.Append(')');
+    };
+
+    public static MethodInfo[] SupportedMethods => new []
+    {
+        typeof(Enumerable).GetMethod(nameof(Enumerable.All))!
+
     };
 }

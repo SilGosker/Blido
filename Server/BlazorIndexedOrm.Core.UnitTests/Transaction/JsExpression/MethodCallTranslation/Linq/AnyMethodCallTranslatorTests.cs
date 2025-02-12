@@ -48,7 +48,7 @@ public class AnyMethodCallTranslatorTests
         };
 
         // Act
-        AllMethodCallTranslator.TranslateMethodCall(sb, expression, processExpression);
+        AnyMethodCallTranslator.TranslateMethodCall(sb, expression, processExpression);
 
         // Assert
         Assert.Equal("[].some(i=>i>3)", sb.ToString());

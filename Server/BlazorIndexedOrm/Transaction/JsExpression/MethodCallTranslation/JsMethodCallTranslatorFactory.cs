@@ -14,7 +14,7 @@ public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory
         var translators = new Dictionary<MethodInfo, TranslateMethodCall>(new MethodInfoEqualityComparer());
         var blazorIndexedOrmTypes = Assembly.GetExecutingAssembly().GetTypes();
 
-        foreach (Type type in blazorIndexedOrmTypes.Where(x => x.IsClass && x.GetInterface("IMethodCallTranslator") != null))
+        foreach (Type type in blazorIndexedOrmTypes.Where(x => x.IsClass && x.GetInterface(nameof(IMethodCallTranslator)) != null))
         {
             if (type.GetProperty(nameof(IMethodCallTranslator.SupportedMethods))!.GetValue(null)
                 is not MethodInfo[] supportedMethods) continue;

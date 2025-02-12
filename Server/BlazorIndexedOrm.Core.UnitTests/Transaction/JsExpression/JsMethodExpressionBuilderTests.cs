@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
@@ -17,7 +17,7 @@ public class JsMethodExpressionBuilderTests
         var methodCall = Expression.Call(Expression.Constant("test"), typeof(string).GetMethod(nameof(string.ToUpper), Array.Empty<Type>())!);
         ProcessExpression processExpression = (_ => { });
 
-        translatorFactory.Setup(x => x.TryGetValue(It.IsAny<MethodInfo>(), out It.Ref<TranslateMethodCall>.IsAny))
+        translatorFactory.Setup(x => x.TryGetValue(It.IsAny<MethodInfo>(), out It.Ref<TranslateMethodCall>.IsAny!))
             .Returns(false);
 
         // Act

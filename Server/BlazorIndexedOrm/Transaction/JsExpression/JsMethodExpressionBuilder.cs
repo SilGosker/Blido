@@ -12,6 +12,7 @@ public class JsMethodExpressionBuilder
         if (!translatorFactory.TryGetValue(methodCall.Method, out var translateMethod))
         {
             ThrowHelper.ThrowUnsupportedException(methodCall.Method);
+            return;
         }
 
         translateMethod(builder, methodCall, processExpression);

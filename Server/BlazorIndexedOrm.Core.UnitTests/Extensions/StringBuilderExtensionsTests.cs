@@ -8,7 +8,7 @@ public class StringBuilderExtensionsTests
     public void AppendEscaped_WhenSbIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        StringBuilder sb = null;
+        StringBuilder sb = null!;
         string s = "test";
 
         // Act

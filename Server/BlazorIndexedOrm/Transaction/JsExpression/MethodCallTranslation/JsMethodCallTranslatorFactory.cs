@@ -10,7 +10,7 @@ public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory, IRe
 
     public JsMethodCallTranslatorFactory()
     {
-        var translators = new Dictionary<MethodInfo, TranslateMethodCall>();
+        var translators = new Dictionary<MethodInfo, TranslateMethodCall>(new MethodInfoEqualityComparer());
         var blazorIndexedOrmTypes = Assembly.GetExecutingAssembly().GetTypes();
 
         foreach (Type type in blazorIndexedOrmTypes.Where(x => x.IsClass && x.GetInterface("IMethodCallTranslator") != null))

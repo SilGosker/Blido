@@ -41,7 +41,7 @@ public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory
 
     public void AddCustomMethodTranslator(MethodInfo method, TranslateMethodCall translateMethod)
     {
-        ThrowHelper.ThrowConfirmedDictionaryException(_translators, out Dictionary<MethodInfo, TranslateMethodCall> dict);
+        ThrowHelper.ThrowDictionaryIsNotReadonlyException(_translators, out Dictionary<MethodInfo, TranslateMethodCall> dict);
         dict[method] = translateMethod;
     }
 

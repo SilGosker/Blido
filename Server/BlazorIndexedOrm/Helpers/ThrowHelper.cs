@@ -29,4 +29,14 @@ public class ThrowHelper
 
         throw new NotSupportedException(sb.ToString());
     }
+
+    public static void ThrowDictionaryIsNotReadonlyException<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> readonlyDictionary, out Dictionary<TKey, TValue> dictionary)
+        where TKey : notnull
+    {
+        if (readonlyDictionary is not Dictionary<TKey, TValue> tempDictionary)
+        {
+            throw new InvalidOperationException("Cannot add custom translator after configuration.");
+        }
+        dictionary = tempDictionary;
+    }
 }

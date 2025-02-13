@@ -13,7 +13,7 @@ public class JsMethodExpressionBuilderTests
     {
         // Arrange
         var builder = new StringBuilder();
-        var translatorFactory = new Mock<IJsMethodCallTranslatorFactory>();
+        var translatorFactory = new Mock<IMethodCallTranslatorFactory>();
         var methodCall = Expression.Call(Expression.Constant("test"), typeof(string).GetMethod(nameof(string.ToUpper), Array.Empty<Type>())!);
         ProcessExpression processExpression = (_ => { });
 
@@ -32,7 +32,7 @@ public class JsMethodExpressionBuilderTests
     {
         // Arrange
         var builder = new StringBuilder();
-        var translatorFactory = new Mock<IJsMethodCallTranslatorFactory>();
+        var translatorFactory = new Mock<IMethodCallTranslatorFactory>();
         var methodCall = Expression.Call(Expression.Constant("test"), typeof(string).GetMethod(nameof(string.ToUpper), Array.Empty<Type>())!);
         ProcessExpression processExpression = (_ => { });
         TranslateMethodCall translateMethodCall = (sb, _, _) =>

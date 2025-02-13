@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using BlazorIndexedOrm.Core.Transaction.JsExpression;
 using BlazorIndexedOrm.Core.Transaction.Materialization;
 using Microsoft.JSInterop;
 
@@ -9,12 +10,17 @@ public class IndexedDbTransactionProvider<TEntity> : ITransactionProvider<TEntit
     private readonly TransactionConditions<TEntity> _transactionConditions = new();
     private readonly IJSRuntime _jsRuntime;
     private readonly IndexedDbDatabase _database;
-    public IndexedDbTransactionProvider(IJSRuntime jsRuntime, IndexedDbDatabase database)
+    private readonly IExpressionBuilder _jsExpressionBuilder;
+    public IndexedDbTransactionProvider(IJSRuntime jsRuntime,
+        IndexedDbDatabase database,
+        IExpressionBuilder jsExpressionBuilder)
     {
         ArgumentNullException.ThrowIfNull(jsRuntime);
         ArgumentNullException.ThrowIfNull(database);
+        ArgumentNullException.ThrowIfNull(jsExpressionBuilder);
         _jsRuntime = jsRuntime;
         _database = database;
+        _jsExpressionBuilder = jsExpressionBuilder;
     }
 
     public Task<TResult> Execute<TResult>(string methodName, CancellationToken cancellationToken = default)
@@ -25,7 +31,7 @@ public class IndexedDbTransactionProvider<TEntity> : ITransactionProvider<TEntit
 
     public Task<TResult> Execute<TResult>(string methodName, Expression<Func<TEntity, TResult>>? selector, CancellationToken cancellationToken = default)
     {
-        var materializer = new TransactionMaterializerFactory<TEntity>(_jsRuntime, _transactionConditions, _database)
+        var materializer = new TransactionMaterializerFactory<TEntity>(_jsRuntime, _transactionConditions, _database, _jsExpressionBuilder)
             .GetMaterializer<TResult>(methodName);
         
         if (selector is null)

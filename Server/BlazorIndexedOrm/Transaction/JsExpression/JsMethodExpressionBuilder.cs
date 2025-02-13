@@ -7,7 +7,7 @@ namespace BlazorIndexedOrm.Core.Transaction.JsExpression;
 
 public class JsMethodExpressionBuilder
 {
-    public static void AppendMethod(StringBuilder builder, IJsMethodCallTranslatorFactory translatorFactory, MethodCallExpression methodCall, ProcessExpression processExpression)
+    public static void AppendMethod(StringBuilder builder, IMethodCallTranslatorFactory translatorFactory, MethodCallExpression methodCall, ProcessExpression processExpression)
     {
         if (!translatorFactory.TryGetValue(methodCall.Method, out var translateMethod))
         {

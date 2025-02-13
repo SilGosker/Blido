@@ -1,27 +1,27 @@
-﻿using System.Reflection;
+using System.Reflection;
 using BlazorIndexedOrm.Core.Transaction;
-using Microsoft.JSInterop;
 
 namespace BlazorIndexedOrm.Core;
 
 public abstract class IndexedDbDatabase
 {
-    private readonly IJSRuntime _jsRuntime;
+    private readonly IIndexedDbTransactionProviderFactory _transactionProviderFactory;
     private readonly ValueTask<ulong> _versionTask;
     public string Name { get; }
     public ulong Version => _versionTask.Result;
     public ValueTask<ulong> GetVersionAsync() => _versionTask;
 
-    protected IndexedDbDatabase(IJSRuntime jsRuntime)
+    protected IndexedDbDatabase(IIndexedDbTransactionProviderFactory transactionProviderFactory)
     {
-        ArgumentNullException.ThrowIfNull(jsRuntime);
-        _jsRuntime = jsRuntime;
+        ArgumentNullException.ThrowIfNull(transactionProviderFactory);
         Name = NameResolver.ResolveIndexedDbStoreName(GetType());
-        _versionTask = _jsRuntime.InvokeAsync<ulong>(JsMethodNameConstants.GetVersion, Name);
-        InitializeObjectStores();
+        _transactionProviderFactory = transactionProviderFactory;
+        _versionTask = _transactionProviderFactory.JsRuntime.InvokeAsync<ulong>(JsMethodNameConstants.GetVersion, new[] { this.Name });
+        transactionProviderFactory.Database = this;
+        InitializeProperties();
     }
 
-    private void InitializeObjectStores()
+    private void InitializeProperties()
     {
         var type = GetType();
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
@@ -35,16 +35,10 @@ public abstract class IndexedDbDatabase
             if (genericType != typeof(ObjectStoreSet<>)) continue;
 
             var objectStoreType = propertyType.GenericTypeArguments[0];
-            var transactionProvider = ResolveTransactionProvider(objectStoreType);
+            var transactionProvider = _transactionProviderFactory.GetIndexedDbTransactionProvider(objectStoreType);
             var objectStore = Activator.CreateInstance(propertyType, transactionProvider);
 
             propertyInfo.SetValue(this, objectStore);
         }
-    }
-
-    private object ResolveTransactionProvider(Type genericType)
-    {
-        var transactionProviderType = typeof(IndexedDbTransactionProvider<>).MakeGenericType(genericType);
-        return Activator.CreateInstance(transactionProviderType, this._jsRuntime, this)!;
     }
 }

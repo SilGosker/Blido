@@ -5,7 +5,7 @@ using BlazorIndexedOrm.Core.Helpers;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 
-public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory
+public class JsMethodCallTranslatorFactory : IMethodCallTranslatorFactory
 {
     private IReadOnlyDictionary<MethodInfo, TranslateMethodCall> _translators;
 
@@ -45,7 +45,7 @@ public class JsMethodCallTranslatorFactory : IJsMethodCallTranslatorFactory
         dict[method] = translateMethod;
     }
 
-    void IJsMethodCallTranslatorFactory.Confirm()
+    void IMethodCallTranslatorFactory.Confirm()
     {
         _translators = _translators.ToFrozenDictionary();
     }

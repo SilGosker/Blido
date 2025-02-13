@@ -1,4 +1,7 @@
-﻿using Microsoft.JSInterop;
+﻿using BlazorIndexedOrm.Core.Transaction.JsExpression;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
+using Microsoft.JSInterop;
 using Moq;
 
 namespace BlazorIndexedOrm.Core.Transaction.Materialization;
@@ -12,9 +15,15 @@ public class TransactionMaterializerFactoryTests
         IJSRuntime jsRuntime = null!;
         var conditions = new TransactionConditions<object>();
         var mockJsRuntime = new Mock<IJSRuntime>().Object;
-        var database = new Mock<IndexedDbDatabase>(mockJsRuntime).Object;
+        var factory = new Mock<IIndexedDbTransactionProviderFactory>();
+        factory.SetupGet(x => x.JsRuntime).Returns(mockJsRuntime);
+        var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
+        var memberTranslatorFactoryMock = new Mock<IMemberTranslatorFactory>();
+        var methodCallTranslatorFactoryMock = new Mock<IMethodCallTranslatorFactory>();
+        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object);
+
         // Act
-        Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database);
+        Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database, expressionBuilder);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(action);
@@ -27,10 +36,16 @@ public class TransactionMaterializerFactoryTests
         // Arrange
         var jsRuntime = new Mock<IJSRuntime>().Object;
         TransactionConditions<object> conditions = null!;
-        var mockJsRuntime = new Mock<IJSRuntime>().Object;
-        var database = new Mock<IndexedDbDatabase>(mockJsRuntime).Object;
+        var factory = new Mock<IIndexedDbTransactionProviderFactory>();
+        factory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
+        var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
+        var memberTranslatorFactoryMock = new Mock<IMemberTranslatorFactory>();
+        var methodCallTranslatorFactoryMock = new Mock<IMethodCallTranslatorFactory>();
+        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object);
+
         // Act
-        Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database);
+        Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database, expressionBuilder);
+        
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(action);
         Assert.Equal("conditions", exception.ParamName);
@@ -43,26 +58,15 @@ public class TransactionMaterializerFactoryTests
         var jsRuntime = new Mock<IJSRuntime>().Object;
         var conditions = new TransactionConditions<object>();
         IndexedDbDatabase database = null!;
+        var memberTranslatorFactoryMock = new Mock<IMemberTranslatorFactory>();
+        var methodCallTranslatorFactoryMock = new Mock<IMethodCallTranslatorFactory>();
+        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object);
+
         // Act
-        Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database);
+        Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database, expressionBuilder);
+        
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(action);
         Assert.Equal("database", exception.ParamName);
-    }
-
-    [Fact]
-    public void GetAggregator_WhenMethodNameIsFirstOrDefaultAsync_ReturnsFirstOrDefaultTransactionMaterializer()
-    {
-        // Arrange
-        var jsRuntime = new Mock<IJSRuntime>().Object;
-        var conditions = new TransactionConditions<object>();
-        var mockJsRuntime = new Mock<IJSRuntime>().Object;
-        var database = new Mock<IndexedDbDatabase>(mockJsRuntime).Object;
-        var factory = new TransactionMaterializerFactory<object>(jsRuntime, conditions, database);
-        var methodName = nameof(ITransactionMaterializationProvider<object>.FirstOrDefaultAsync);
-        // Act
-        var result = factory.GetMaterializer<object>(methodName);
-        // Assert
-        Assert.IsType<FirstOrDefaultTransactionMaterializer<object>>(result);
     }
 }

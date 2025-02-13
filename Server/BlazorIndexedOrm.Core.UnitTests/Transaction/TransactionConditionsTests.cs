@@ -20,6 +20,54 @@ public class TransactionConditionsTests
     }
 
     [Fact]
+    public void HasConditions_WithNoConditionsSupplied_ReturnsFalse()
+    {
+        // Arrange
+        var conditions = new TransactionConditions<object>();
+        
+        // Act
+        var result = conditions.HasConditions;
+        
+        // Assert
+        Assert.False(result);
+
+    }
+
+    [Fact]
+    public void HasConditions_WithConditionsSupplied_ReturnsTrue()
+    {
+        // Arrange
+        var conditions = new TransactionConditions<object>();
+        conditions.AddCondition(e => true);
+
+        // Act
+        var result = conditions.HasConditions;
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void Count_ReturnsAmountOfConditionsSupplied(int amount)
+    {
+        // Arrange
+        var conditions = new TransactionConditions<object>();
+        for (int i = 0; i < amount; i++)
+        {
+            conditions.AddCondition(e => true); 
+        }
+
+        // Act
+        var result = conditions.Count;
+        
+        // Assert
+        Assert.Equal(amount, result);
+    }
+
+    [Fact]
     public void FullFillsConditions_WithNullEntity_ThrowArgumentNullException()
     {
         // Arrange

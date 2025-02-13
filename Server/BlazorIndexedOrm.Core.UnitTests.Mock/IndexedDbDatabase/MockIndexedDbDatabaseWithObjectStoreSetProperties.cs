@@ -1,10 +1,11 @@
-﻿using Microsoft.JSInterop;
+﻿using BlazorIndexedOrm.Core.Transaction;
 
 namespace BlazorIndexedOrm.Core.UnitTests.Mock.IndexedDbDatabase;
 
 public class MockIndexedDbDatabaseWithObjectStoreSetProperties : Core.IndexedDbDatabase
 {
-    public MockIndexedDbDatabaseWithObjectStoreSetProperties(IJSRuntime jsRuntime) : base(jsRuntime)
+    public MockIndexedDbDatabaseWithObjectStoreSetProperties(IIndexedDbTransactionProviderFactory transactionProviderFactory)
+        : base(transactionProviderFactory)
     {
     }
 

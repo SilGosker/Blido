@@ -82,7 +82,7 @@ public class JsMethodCallTranslatorFactoryTests
         factory.AddCustomMethodTranslator(method, MockUnsupportedMethodCallTranslator.TranslateMethodCall);
         
         // Act
-        ((IJsMethodCallTranslatorFactory)factory).Confirm();
+        ((IMethodCallTranslatorFactory)factory).Confirm();
 
         // Assert
         Assert.Throws<InvalidOperationException>(() => factory.AddCustomMethodTranslator(method, MockUnsupportedMethodCallTranslator.TranslateMethodCall));

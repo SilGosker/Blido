@@ -56,44 +56,32 @@ public sealed class MethodInfoEqualityComparer : IEqualityComparer<MethodInfo>
         return x == y;
     }
 
-    public int GetHashCode(MethodInfo obj)
+    public int GetHashCode(MethodInfo method)
     {
-        HashCode hashCode = new();
-        hashCode.Add(obj.CustomAttributes);
-        hashCode.Add(obj.DeclaringType);
-        hashCode.Add(obj.IsCollectible);
-        hashCode.Add(obj.MetadataToken);
-        hashCode.Add(obj.Module);
-        hashCode.Add(obj.Name);
-        hashCode.Add(obj.ReflectedType);
-        hashCode.Add((int)obj.Attributes);
-        hashCode.Add((int)obj.CallingConvention);
-        hashCode.Add(obj.ContainsGenericParameters);
-        hashCode.Add(obj.IsAbstract);
-        hashCode.Add(obj.IsAssembly);
-        hashCode.Add(obj.IsConstructedGenericMethod);
-        hashCode.Add(obj.IsConstructor);
-        hashCode.Add(obj.IsFamily);
-        hashCode.Add(obj.IsFamilyAndAssembly);
-        hashCode.Add(obj.IsFamilyOrAssembly);
-        hashCode.Add(obj.IsFinal);
-        hashCode.Add(obj.IsGenericMethod);
-        hashCode.Add(obj.IsGenericMethodDefinition);
-        hashCode.Add(obj.IsHideBySig);
-        hashCode.Add(obj.IsPrivate);
-        hashCode.Add(obj.IsPublic);
-        hashCode.Add(obj.IsSecurityCritical);
-        hashCode.Add(obj.IsSecuritySafeCritical);
-        hashCode.Add(obj.IsSecurityTransparent);
-        hashCode.Add(obj.IsSpecialName);
-        hashCode.Add(obj.IsStatic);
-        hashCode.Add(obj.IsVirtual);
-        hashCode.Add(obj.MethodHandle);
-        hashCode.Add((int)obj.MethodImplementationFlags);
-        hashCode.Add((int)obj.MemberType);
-        hashCode.Add(obj.ReturnParameter);
-        hashCode.Add(obj.ReturnType);
-        hashCode.Add(obj.ReturnTypeCustomAttributes);
-        return hashCode.ToHashCode();
+        unchecked
+        {
+            int hash = 17;
+
+            // Hash declaring type
+            hash = hash * 31 + (method.DeclaringType?.GetHashCode() ?? 0);
+
+            // Hash method name
+            hash = hash * 31 + method.Name.GetHashCode();
+
+            // Hash generic method definition if present
+            if (method.IsGenericMethod)
+            {
+                MethodInfo genericDefinition = method.GetGenericMethodDefinition();
+                hash = hash * 31 + genericDefinition.MetadataToken;
+            }
+
+            // Hash parameter types
+            foreach (var param in method.GetParameters())
+            {
+                hash = hash * 31 + param.ParameterType.GetHashCode();
+            }
+
+            return hash;
+        }
     }
 }

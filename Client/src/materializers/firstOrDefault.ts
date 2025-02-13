@@ -2,14 +2,19 @@ import {DotNetObjectReference} from "../DotNetObjectReference";
 import {connectToDatabase} from "../connectToDatabase";
 
 export interface FirstOrDefaultInterface {
-    (database: string, objectStore: string, currentVersion: number, transactionConditions: DotNetObjectReference): Promise<unknown>
+    (database: string, objectStore: string, currentVersion: number, parsedExpression: string[]): Promise<unknown>
 }
 
-export function firstOrDefault(database: string, objectStore: string, currentVersion: number, transactionConditions: DotNetObjectReference): Promise<unknown> {
+export function firstOrDefault(database: string, objectStore: string, currentVersion: number, parsedExpression: string[] | undefined) : Promise<unknown> {
     return new Promise(async (resolve, reject) => {
         const db = await connectToDatabase(database, currentVersion);
         const request = db.transaction(objectStore, 'readonly')
             .objectStore(objectStore).openCursor();
+
+        let transactionConditions: ((entity: unknown) => boolean)[] = [_ => true];
+        if (parsedExpression && parsedExpression.length) {
+            transactionConditions = parsedExpression.map(x => eval(x) as (entity: unknown) => boolean);
+        }
 
         request.onsuccess = () => {
             const cursor = request.result as IDBCursorWithValue;
@@ -20,14 +25,11 @@ export function firstOrDefault(database: string, objectStore: string, currentVer
             }
 
             const object = cursor.value;
-
-            const fullFillsCondition = transactionConditions.invokeMethod('FullFillsConditions', object);
-
+            const fullFillsCondition = transactionConditions.every(x => x(object));
             if (fullFillsCondition) {
                 resolve(object);
                 return;
             }
-            console.log(request);
 
             cursor.continue();
         };

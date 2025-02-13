@@ -72,7 +72,7 @@ public class JsMemberTranslatorFactory : IMemberTranslatorFactory
         return _translators.TryGetValue(key, out value);
     }
 
-    public TranslateMember this[MemberInfo key] => throw new NotImplementedException();
+    public TranslateMember this[MemberInfo key] => _translators[key];
 
     public IEnumerable<MemberInfo> Keys => _translators.Keys;
     public IEnumerable<TranslateMember> Values => _translators.Values;

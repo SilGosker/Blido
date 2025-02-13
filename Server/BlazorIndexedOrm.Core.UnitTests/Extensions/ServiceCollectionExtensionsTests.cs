@@ -31,9 +31,9 @@ public class ServiceCollectionExtensionsTests
         // Arrange
         var serviceCollection = new ServiceCollection();
         var mockJsRuntime = new Mock<IJSRuntime>().Object;
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
 
         // Act
-        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
         serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
 
         // Assert
@@ -49,9 +49,9 @@ public class ServiceCollectionExtensionsTests
         // Arrange
         var serviceCollection = new ServiceCollection();
         var mockJsRuntime = new Mock<IJSRuntime>().Object;
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
 
         // Act
-        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
         serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
 
         // Assert

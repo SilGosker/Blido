@@ -27,4 +27,17 @@ public class ObjectStoreNameAttributeTests
         // Assert
         Assert.Throws<ArgumentException>(act);
     }
+
+    [Fact]
+    public void Constructor_WithValidName_ShouldSetName()
+    {
+        // Arrange
+        var name = "name";
+        
+        // Act
+        var attribute = new ObjectStoreNameAttribute(name);
+     
+        // Assert
+        Assert.Equal(name, attribute.Name);
+    }
 }

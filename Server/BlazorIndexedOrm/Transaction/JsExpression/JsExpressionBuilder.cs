@@ -15,13 +15,14 @@ public class JsExpressionBuilder : IExpressionBuilder
     public JsExpressionBuilder(IMethodCallTranslatorFactory methodCallTranslatorFactory, IMemberTranslatorFactory memberTranslatorFactory)
     {
         ArgumentNullException.ThrowIfNull(methodCallTranslatorFactory);
+        ArgumentNullException.ThrowIfNull(memberTranslatorFactory);
         _methodCallTranslatorFactory = methodCallTranslatorFactory;
         _memberTranslatorFactory = memberTranslatorFactory;
     }
 
-    [Pure]
     public string ProcessExpression(LambdaExpression expression)
     {
+        ArgumentNullException.ThrowIfNull(expression);
         _builder.Clear();
         InternalProcessExpression(expression);
         return _builder.ToString();

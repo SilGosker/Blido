@@ -18,6 +18,10 @@ public class JsUnaryExpressionBuilder
             case ExpressionType.OnesComplement:
                 sb.Append('~');
                 break;
+            case ExpressionType.ArrayLength:
+                processExpression(expression.Operand);
+                sb.Append(".length");
+                return;
             default:
                 throw new ArgumentOutOfRangeException(nameof(expression.NodeType));
         }

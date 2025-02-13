@@ -11,7 +11,7 @@ public class SubStringMethodCallTranslator : IMethodCallTranslator
         processExpression(expression.Arguments[0]);
         if (expression.Arguments.Count > 1)
         {
-            sb.Append(", ");
+            sb.Append(',');
             processExpression(expression.Arguments[1]);
         }
 

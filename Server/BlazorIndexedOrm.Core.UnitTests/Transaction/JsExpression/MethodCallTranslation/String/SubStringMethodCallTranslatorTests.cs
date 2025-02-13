@@ -78,6 +78,6 @@ public class SubStringMethodCallTranslatorTests
         // Act
         SubStringMethodCallTranslator.TranslateMethodCall(builder, expression, processExpression);
         // Assert
-        Assert.Equal("\"base\".substring(1, 2)", builder.ToString());
+        Assert.Equal("\"base\".substring(1,2)", builder.ToString());
     }
 }

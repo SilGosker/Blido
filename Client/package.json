@@ -6,8 +6,7 @@
   "scripts": {
     "build": "npx webpack",
     "copy": "ncp ./dist/load.js ../Server/BlazorIndexedOrm/wwwroot/BlazorOrm.min.js",
-    "buildcopy": "npm run build && npm run copy",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "buildcopy": "npm run build && npm run copy"
   },
   "keywords": [],
   "author": "",

@@ -24,7 +24,7 @@ public class JsLambdaExpressionBuilderTests
         JsLambdaExpressionBuilder.AppendLambda(sb, expression, processExpression);
 
         // Assert
-        Assert.Equal("(a)=>;", sb.ToString());
+        Assert.Equal("(a)=>", sb.ToString());
     }
 
     [Fact]
@@ -45,6 +45,6 @@ public class JsLambdaExpressionBuilderTests
         JsLambdaExpressionBuilder.AppendLambda(sb, expression, processExpression);
 
         // Assert
-        Assert.Equal("(a,b)=>;", sb.ToString());
+        Assert.Equal("(a,b)=>", sb.ToString());
     }
 }

@@ -22,7 +22,5 @@ public class JsLambdaExpressionBuilder
 
         sb.Append(")=>");
         processExpression(lambda.Body);
-
-        sb.Append(';');
     }
 }

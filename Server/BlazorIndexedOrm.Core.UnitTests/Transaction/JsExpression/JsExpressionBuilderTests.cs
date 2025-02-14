@@ -116,7 +116,7 @@ public class JsExpressionBuilderTests
         string s = jsExpressionBuilder.ProcessExpression(Expression.Lambda(expression));
 
         // Assert
-        Assert.Equal("()=>!(true)", s);
+        Assert.Equal("()=>(!true)", s);
     }
 
     [Fact]

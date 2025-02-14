@@ -17,7 +17,7 @@ public class JsUnaryExpressionBuilderTests
         JsUnaryExpressionBuilder.AppendUnary(sb, expression, ProcessExpression);
 
         // Assert
-        Assert.Equal("!(False)", sb.ToString());
+        Assert.Equal("(!False)", sb.ToString());
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class JsUnaryExpressionBuilderTests
         JsUnaryExpressionBuilder.AppendUnary(sb, expression, ProcessExpression);
 
         // Assert
-        Assert.Equal("~(42)", sb.ToString());
+        Assert.Equal("(~42)", sb.ToString());
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class JsUnaryExpressionBuilderTests
         JsUnaryExpressionBuilder.AppendUnary(sb, expression, ProcessExpression);
         
         // Assert
-        Assert.Equal("-(42)", sb.ToString());
+        Assert.Equal("(-42)", sb.ToString());
     }
 
     [Fact]

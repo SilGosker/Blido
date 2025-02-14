@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Text;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression;
@@ -31,14 +31,9 @@ public class JsUnaryExpressionBuilder
             case ExpressionType.OnesComplement:
                 sb.Append('~');
                 break;
-            case ExpressionType.ArrayLength:
-                processExpression(expression.Operand);
-                sb.Append(".length");
-                return;
             default:
                 throw new ArgumentOutOfRangeException(nameof(expression.NodeType));
         }
-        sb.Append('(');
         processExpression(expression.Operand);
         sb.Append(')');
     }

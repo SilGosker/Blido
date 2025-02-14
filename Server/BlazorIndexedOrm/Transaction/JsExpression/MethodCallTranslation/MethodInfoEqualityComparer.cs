@@ -58,30 +58,10 @@ public sealed class MethodInfoEqualityComparer : IEqualityComparer<MethodInfo>
 
     public int GetHashCode(MethodInfo method)
     {
-        unchecked
+        if (method.IsGenericMethod)
         {
-            int hash = 17;
-
-            // Hash declaring type
-            hash = hash * 31 + (method.DeclaringType?.GetHashCode() ?? 0);
-
-            // Hash method name
-            hash = hash * 31 + method.Name.GetHashCode();
-
-            // Hash generic method definition if present
-            if (method.IsGenericMethod)
-            {
-                MethodInfo genericDefinition = method.GetGenericMethodDefinition();
-                hash = hash * 31 + genericDefinition.MetadataToken;
-            }
-
-            // Hash parameter types
-            foreach (var param in method.GetParameters())
-            {
-                hash = hash * 31 + param.ParameterType.GetHashCode();
-            }
-
-            return hash;
+            return method.GetGenericMethodDefinition().GetHashCode();
         }
+        return method.GetHashCode();
     }
 }

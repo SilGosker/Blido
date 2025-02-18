@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace BlazorIndexedOrm.Core.Helpers;
@@ -26,6 +27,20 @@ public class ThrowHelper
             sb.Append(parameters[i].ParameterType.FullName);
         }
         sb.Append(") is not supported. Use a different method or overload");
+
+        throw new NotSupportedException(sb.ToString());
+    }
+
+    public static void ThrowUnsupportedException(BinaryExpression binary)
+    {
+        ArgumentNullException.ThrowIfNull(binary);
+        StringBuilder sb = new("Using the binary expression ");
+        sb.Append(binary.Left.Type);
+        sb.Append('.');
+        sb.Append(binary.NodeType);
+        sb.Append('(');
+        sb.Append(binary.Right.Type);
+        sb.Append(") is not supported. Use a different expression or overload");
 
         throw new NotSupportedException(sb.ToString());
     }

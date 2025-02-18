@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Text;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 
@@ -10,14 +11,17 @@ public class JsExpressionBuilder : IExpressionBuilder
 {
     private readonly IMethodCallTranslatorFactory _methodCallTranslatorFactory;
     private readonly IMemberTranslatorFactory _memberTranslatorFactory;
+    private readonly IBinaryTranslatorFactory _binaryTranslatorFactory;
     private readonly StringBuilder _builder = new();
 
-    public JsExpressionBuilder(IMethodCallTranslatorFactory methodCallTranslatorFactory, IMemberTranslatorFactory memberTranslatorFactory)
+    public JsExpressionBuilder(IMethodCallTranslatorFactory methodCallTranslatorFactory, IMemberTranslatorFactory memberTranslatorFactory, IBinaryTranslatorFactory binaryTranslatorFactory)
     {
         ArgumentNullException.ThrowIfNull(methodCallTranslatorFactory);
         ArgumentNullException.ThrowIfNull(memberTranslatorFactory);
+        ArgumentNullException.ThrowIfNull(binaryTranslatorFactory);
         _methodCallTranslatorFactory = methodCallTranslatorFactory;
         _memberTranslatorFactory = memberTranslatorFactory;
+        _binaryTranslatorFactory = binaryTranslatorFactory;
     }
 
     public string ProcessExpression(LambdaExpression expression)
@@ -33,7 +37,7 @@ public class JsExpressionBuilder : IExpressionBuilder
         switch (expression)
         {
             case BinaryExpression binary:
-                JsBinaryExpressionBuilder.AppendEquality(_builder, binary, InternalProcessExpression);
+                JsBinaryExpressionBuilder.AppendBinary(_builder, _binaryTranslatorFactory, binary, InternalProcessExpression);
                 break;
             case ConstantExpression constant:
                 JsConstantExpressionBuilder.AppendConstant(_builder, constant);

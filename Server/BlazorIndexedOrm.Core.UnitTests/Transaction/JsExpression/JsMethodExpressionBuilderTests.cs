@@ -40,7 +40,7 @@ public class JsMethodExpressionBuilderTests
             sb.Append("test.toUpperCase()");
         };
 
-        translatorFactory.Setup(x => x.TryGetValue(It.IsAny<MethodInfo>(), out translateMethodCall))
+        translatorFactory.Setup(x => x.TryGetValue(It.IsAny<MethodInfo>(), out translateMethodCall!))
             .Returns(true);
 
         // Act

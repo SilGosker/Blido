@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using BlazorIndexedOrm.Core.Transaction.JsExpression;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 using Microsoft.JSInterop;
@@ -41,7 +42,8 @@ public class FirstOrDefaultTransactionMaterializerTests
         var objectStore = "objectStore";
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
         var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
 
         // Act
         Action action = () => new FirstOrDefaultTransactionMaterializer<object>(jsRuntime, jsExpressionBuilder, conditions, database, objectStore);
@@ -61,7 +63,8 @@ public class FirstOrDefaultTransactionMaterializerTests
         var objectStore = "objectStore";
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
         var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
 
         // Act
         Action action = () => new FirstOrDefaultTransactionMaterializer<object>(jsRuntime, jsExpressionBuilder, conditions, database, objectStore);

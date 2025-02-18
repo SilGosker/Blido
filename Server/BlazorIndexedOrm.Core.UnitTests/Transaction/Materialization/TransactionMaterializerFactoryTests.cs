@@ -1,4 +1,5 @@
 ﻿using BlazorIndexedOrm.Core.Transaction.JsExpression;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 using Microsoft.JSInterop;
@@ -20,7 +21,8 @@ public class TransactionMaterializerFactoryTests
         var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
         var memberTranslatorFactoryMock = new Mock<IMemberTranslatorFactory>();
         var methodCallTranslatorFactoryMock = new Mock<IMethodCallTranslatorFactory>();
-        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object, binaryTranslatorFactory.Object);
 
         // Act
         Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database, expressionBuilder);
@@ -41,7 +43,8 @@ public class TransactionMaterializerFactoryTests
         var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
         var memberTranslatorFactoryMock = new Mock<IMemberTranslatorFactory>();
         var methodCallTranslatorFactoryMock = new Mock<IMethodCallTranslatorFactory>();
-        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object, binaryTranslatorFactory.Object);
 
         // Act
         Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database, expressionBuilder);
@@ -60,7 +63,8 @@ public class TransactionMaterializerFactoryTests
         IndexedDbDatabase database = null!;
         var memberTranslatorFactoryMock = new Mock<IMemberTranslatorFactory>();
         var methodCallTranslatorFactoryMock = new Mock<IMethodCallTranslatorFactory>();
-        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var expressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactoryMock.Object, memberTranslatorFactoryMock.Object, binaryTranslatorFactory.Object);
 
         // Act
         Action action = () => new TransactionMaterializerFactory<object>(jsRuntime, conditions, database, expressionBuilder);

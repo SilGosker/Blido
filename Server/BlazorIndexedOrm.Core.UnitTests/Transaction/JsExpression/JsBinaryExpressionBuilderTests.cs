@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
+using Moq;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression;
 
@@ -16,236 +18,39 @@ public class JsBinaryExpressionBuilderTests
     }
 
     [Fact]
-    public void AppendEquality_WithEqualExpression_AppendsExpression()
+    public void AppendBinary_WhenBinaryTranslatorFactoryContainsBinary_TranslatesBinary()
     {
         // Arrange
-        var expression = Expression.Equal(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
+        var binary = Expression.Add(Expression.Constant(1), Expression.Constant(2));
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        ProcessExpression processExpression = (_) => { };
+        TranslateBinary translateBinary = (sb, binary, processExpression) =>
         {
-            sb.Append(((ConstantExpression)ex).Value);
+
         };
+        var sb = new StringBuilder();
+        binaryTranslatorFactory.Setup(x => x.TryGetValue(binary, out translateBinary)).Returns(true);
 
         // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
+        JsBinaryExpressionBuilder.AppendBinary(sb, binaryTranslatorFactory.Object, binary, processExpression);
+        
         // Assert
-        Assert.Equal("(10)===(20)", sb.ToString());
+        binaryTranslatorFactory.Verify(x => x.TryGetValue(binary, out translateBinary), Times.Once);
     }
 
     [Fact]
-    public void AppendEquality_WithNotEqualExpression_AppendsExpression()
+    public void AppendBinary_WhenBinaryTranslatorFactoryDoesNotContainBinary_ThrowsNotSupportedException()
     {
         // Arrange
-        var expression = Expression.NotEqual(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
+        var binary = Expression.Add(Expression.Constant(1), Expression.Constant(2));
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        ProcessExpression processExpression = (_) => { };
+        var sb = new StringBuilder();
+        binaryTranslatorFactory.Setup(x => x.TryGetValue(binary, out It.Ref<TranslateBinary>.IsAny!)).Returns(false);
         // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
+        Action act = () => JsBinaryExpressionBuilder.AppendBinary(sb, binaryTranslatorFactory.Object, binary, processExpression);
         // Assert
-        Assert.Equal("(10)!==(20)", sb.ToString());
+        Assert.Throws<NotSupportedException>(act);
     }
 
-    [Fact]
-    public void AppendEquality_WithAddExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.Add(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)+(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithSubtractExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.Subtract(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)-(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithMultiplyExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.Multiply(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)*(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithDivideExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.Divide(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)/(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithModuloExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.Modulo(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)%(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithGreaterThanExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.GreaterThan(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)>(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithLessThanExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.LessThan(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)<(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithAndAlsoExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.AndAlso(Expression.Constant(true), Expression.Constant(false));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(True)&&(False)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithOrElseExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.OrElse(Expression.Constant(true), Expression.Constant(false));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(True)||(False)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithGreaterThanOrEqualExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.GreaterThanOrEqual(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)>=(20)", sb.ToString());
-    }
-
-    [Fact]
-    public void AppendEquality_WithLessThanOrEqualExpression_AppendsExpression()
-    {
-        // Arrange
-        var expression = Expression.LessThanOrEqual(Expression.Constant(10), Expression.Constant(20));
-        StringBuilder sb = new();
-        ProcessExpression processExpression = (ex) =>
-        {
-            sb.Append(((ConstantExpression)ex).Value);
-        };
-
-        // Act
-        JsBinaryExpressionBuilder.AppendEquality(sb, expression, processExpression);
-
-        // Assert
-        Assert.Equal("(10)<=(20)", sb.ToString());
-    }
 }

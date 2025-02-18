@@ -2,6 +2,7 @@
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -36,7 +37,8 @@ public class IndexedDbTransactionProviderTests
         IndexedDbDatabase indexedDbDatabase = null!;
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
         var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
 
         // Act
         var act = () => new IndexedDbTransactionProvider<object>(jsRuntime, indexedDbDatabase, jsExpressionBuilder);
@@ -116,7 +118,8 @@ public class IndexedDbTransactionProviderTests
         var indexedDbDatabase = new Mock<IndexedDbDatabase>(factory.Object).Object;
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
         var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object);
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
         var transactionProvider = new IndexedDbTransactionProvider<object>(jsRuntime, indexedDbDatabase, jsExpressionBuilder);
         Expression<Func<object, bool>> expression = _ => true;
 

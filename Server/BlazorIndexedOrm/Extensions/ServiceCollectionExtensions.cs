@@ -1,5 +1,6 @@
 ﻿using BlazorIndexedOrm.Core.Transaction;
 using BlazorIndexedOrm.Core.Transaction.JsExpression;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<TDatabase>();
         serviceCollection.AddSingleton<IMethodCallTranslatorFactory, JsMethodCallTranslatorFactory>();
         serviceCollection.AddSingleton<IMemberTranslatorFactory, JsMemberTranslatorFactory>();
+        serviceCollection.AddSingleton<IBinaryTranslatorFactory, JsBinaryTranslatorFactory>();
         serviceCollection.AddScoped<IExpressionBuilder, JsExpressionBuilder>();
         serviceCollection.AddScoped<IIndexedDbTransactionProviderFactory, IndexedDbTransactionProviderFactory>();
 

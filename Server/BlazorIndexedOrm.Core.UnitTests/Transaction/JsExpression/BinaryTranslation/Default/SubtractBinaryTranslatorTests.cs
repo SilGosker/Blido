@@ -68,6 +68,7 @@ public class SubtractBinaryTranslatorTests
         
         // Assert
         Assert.False(isMatch);
+        Assert.Equal(default, hash);
     }
 
     [Fact]

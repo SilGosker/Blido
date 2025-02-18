@@ -10,8 +10,10 @@ public class CountMemberTranslatorTests
     {
         // Arrange
         var members = CountMemberTranslator.SupportedMembers;
+
         // Act
         var containsNull = members.Contains(null);
+        
         // Assert
         Assert.False(containsNull);
     }

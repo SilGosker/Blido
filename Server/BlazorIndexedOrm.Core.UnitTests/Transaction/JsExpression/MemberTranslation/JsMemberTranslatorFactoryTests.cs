@@ -1,5 +1,4 @@
-﻿using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
-using BlazorIndexedOrm.Core.UnitTests.Mock.Transaction.JsExpression.MemberCallTranslation;
+﻿using BlazorIndexedOrm.Core.UnitTests.Mock.Transaction.JsExpression.MemberCallTranslation;
 using System.Reflection;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
@@ -58,7 +57,7 @@ public class JsMemberTranslatorFactoryTests
     }
 
     [Fact]
-    public void AddCustomMemberTranslator_WhenCalledGenericallyWIthExistingMember_ReplacesMemberTranslators()
+    public void AddCustomMemberTranslator_WhenCalledGenericallyWithExistingMember_ReplacesMemberTranslators()
     {
         // Arrange
         var factory = new JsMemberTranslatorFactory();

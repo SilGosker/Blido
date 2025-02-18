@@ -118,8 +118,10 @@ public class TransactionConditionsTests
         var conditions = new TransactionConditions<object>();
         conditions.AddCondition(e => false);
         var entity = new object();
+        
         // Act
         var result = conditions.FullFillsConditions(entity);
+        
         // Assert
         Assert.False(result);
     }

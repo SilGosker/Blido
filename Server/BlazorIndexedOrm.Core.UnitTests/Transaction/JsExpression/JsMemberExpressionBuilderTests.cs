@@ -18,6 +18,7 @@ public class JsMemberExpressionBuilderTests
         var expression = Expression.Property(Expression.Constant(objectStore), "Name");
         var processExpression = new ProcessExpression(_ => { });
         var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>();
+
         // Act
         JsMemberExpressionBuilder.AppendMember(sb, memberTranslatorFactory.Object, expression, processExpression);
 

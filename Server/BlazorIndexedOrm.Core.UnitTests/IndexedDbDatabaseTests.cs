@@ -29,6 +29,7 @@ public class IndexedDbDatabaseTests
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var indexedDbTransactionProviderFactory = new Mock<IIndexedDbTransactionProviderFactory>();
         indexedDbTransactionProviderFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        
         // Act
         var database = new MockIndexedDbDatabase(indexedDbTransactionProviderFactory.Object);
         
@@ -44,6 +45,7 @@ public class IndexedDbDatabaseTests
         var jsRuntime = new Mock<IJSRuntime>();
         var indexedDbTransactionProviderFactory = new Mock<IIndexedDbTransactionProviderFactory>();
         indexedDbTransactionProviderFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime.Object);
+        
         // Act
         var database = new MockIndexedDbDatabaseWithAttribute(indexedDbTransactionProviderFactory.Object);
 
@@ -90,7 +92,7 @@ public class IndexedDbDatabaseTests
             });
 
         // Act
-        MockIndexedDbDatabaseWithObjectStoreSetProperties database = new MockIndexedDbDatabaseWithObjectStoreSetProperties(indexedDbTransactionProviderFactoryMock.Object);
+        var database = new MockIndexedDbDatabaseWithObjectStoreSetProperties(indexedDbTransactionProviderFactoryMock.Object);
 
         // Assert
         Assert.NotNull(database.Exceptions);

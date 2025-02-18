@@ -40,10 +40,7 @@ public class FirstOrDefaultTransactionMaterializerTests
         factory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
         var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
         var objectStore = "objectStore";
-        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
-        var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
 
         // Act
         Action action = () => new FirstOrDefaultTransactionMaterializer<object>(jsRuntime, jsExpressionBuilder, conditions, database, objectStore);
@@ -61,10 +58,7 @@ public class FirstOrDefaultTransactionMaterializerTests
         var conditions = new TransactionConditions<object>();
         IndexedDbDatabase database = null!;
         var objectStore = "objectStore";
-        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
-        var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
 
         // Act
         Action action = () => new FirstOrDefaultTransactionMaterializer<object>(jsRuntime, jsExpressionBuilder, conditions, database, objectStore);
@@ -98,47 +92,44 @@ public class FirstOrDefaultTransactionMaterializerTests
     public async Task ExecuteAsync_WhenCalled_CallsJsRuntimeInvokeAsync()
     {
         // Arrange
+        var expected = new object();
         var jsRuntime = new Mock<IJSRuntime>();
-        jsRuntime.Setup(e => e.InvokeAsync<object>(JsMethodNameConstants.GetVersion, It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
+        jsRuntime.Setup(e => e.InvokeAsync<object>(JsMethodNameConstants.GetVersion, It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(1ul);
+        jsRuntime.Setup(x => x.InvokeAsync<object>(JsMethodNameConstants.FirstOrDefault, It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(expected);
         var factory = new Mock<IIndexedDbTransactionProviderFactory>();
         factory.SetupGet(x => x.JsRuntime).Returns(jsRuntime.Object);
         var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
-        var objectStore = "objectStore";
-        var result = new object();
-        jsRuntime.Setup(x => x.InvokeAsync<object>(JsMethodNameConstants.FirstOrDefault, It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(result);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var materializer = new FirstOrDefaultTransactionMaterializer<object>(jsRuntime.Object, jsExpressionBuilder, new TransactionConditions<object>(), database, objectStore);
+        var materializer = new FirstOrDefaultTransactionMaterializer<object>(jsRuntime.Object, jsExpressionBuilder, new TransactionConditions<object>(), database, "objectStore");
 
         // Act
         var actual = await materializer.ExecuteAsync();
         
         // Assert
-        Assert.Equal(result, actual);
+        Assert.Same(expected, actual);
     }
 
     [Fact]
     public async Task ExecuteAsync_WhenTransactionHasConditions_PassesFunctionArray()
     {
         // Arrange
-        string expressionResult = "expression";
-        string[] expected = new[] { expressionResult, expressionResult };
+        string[] expected = new[] { "expression", "expression" };
         string[]? result = null;
         var jsRuntime = new Mock<IJSRuntime>();
         jsRuntime.Setup(e => e.InvokeAsync<object>(JsMethodNameConstants.GetVersion, It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(It.IsAny<ulong>());
-        Delegate callBack = (string _, CancellationToken _, params object[] parameters) =>
-        {
-            result = (string[])parameters[3];
-        };
-        
         jsRuntime.Setup(x => x.InvokeAsync<object>(JsMethodNameConstants.FirstOrDefault, It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-            .Callback(callBack).ReturnsAsync(It.IsAny<object>());
+            .Callback((string _, CancellationToken _, object[] parameters) =>
+            {
+                result = (string[])parameters[3];
+            }).ReturnsAsync(It.IsAny<object>());
         
         var factory = new Mock<IIndexedDbTransactionProviderFactory>();
         factory.SetupGet(x => x.JsRuntime).Returns(jsRuntime.Object);
         var database = new Mock<IndexedDbDatabase>(factory.Object).Object;
         var mockExpressionBuilder = new Mock<IExpressionBuilder>();
-        mockExpressionBuilder.Setup(e => e.ProcessExpression(It.IsAny<LambdaExpression>())).Returns(expressionResult);
-        
+        mockExpressionBuilder.Setup(e => e.ProcessExpression(It.IsAny<LambdaExpression>())).Returns("expression");
         var conditions = new TransactionConditions<object>();
         conditions.AddCondition(_ => true);
         conditions.AddCondition(_ => false);

@@ -24,7 +24,7 @@ public class JsBinaryExpressionBuilderTests
         var binary = Expression.Add(Expression.Constant(1), Expression.Constant(2));
         var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
         ProcessExpression processExpression = (_) => { };
-        TranslateBinary translateBinary = (sb, binary, processExpression) =>
+        TranslateBinary translateBinary = (_, _, _) =>
         {
 
         };
@@ -47,8 +47,10 @@ public class JsBinaryExpressionBuilderTests
         ProcessExpression processExpression = (_) => { };
         var sb = new StringBuilder();
         binaryTranslatorFactory.Setup(x => x.TryGetValue(binary, out It.Ref<TranslateBinary>.IsAny!)).Returns(false);
+        
         // Act
         Action act = () => JsBinaryExpressionBuilder.AppendBinary(sb, binaryTranslatorFactory.Object, binary, processExpression);
+        
         // Assert
         Assert.Throws<NotSupportedException>(act);
     }

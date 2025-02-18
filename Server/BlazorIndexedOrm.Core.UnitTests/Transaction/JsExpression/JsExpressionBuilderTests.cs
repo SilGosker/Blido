@@ -146,10 +146,10 @@ public class JsExpressionBuilderTests
     {
         // Arrange
         var methodCallTranslatorFactory = new JsMethodCallTranslatorFactory();
-        var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
-        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        var memberTranslatorFactory = new JsMemberTranslatorFactory();
+        var binaryTranslatorFactory = new JsBinaryTranslatorFactory();
         var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
-        var method = typeof(string).GetMethod("Substring", new[] { typeof(int), typeof(int) })!;
+        var method = typeof(string).GetMethod(nameof(string.Substring), new[] { typeof(int), typeof(int) })!;
         var expression = Expression.Call(Expression.Constant("test"), method, Expression.Constant(1), Expression.Constant(2));
         
         // Act
@@ -163,9 +163,9 @@ public class JsExpressionBuilderTests
     public void ProcessExpression_WithParameterExpression_CallsJsParameterExpressionBuilderAppendParameter()
     {
         // Arrange
-        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
-        var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
-        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        var methodCallTranslatorFactory = new JsMethodCallTranslatorFactory();
+        var memberTranslatorFactory = new JsMemberTranslatorFactory();
+        var binaryTranslatorFactory = new JsBinaryTranslatorFactory();
         var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
         var expression = Expression.Parameter(typeof(int), "x");
         var result = Expression.Constant("test");

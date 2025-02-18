@@ -35,10 +35,7 @@ public class IndexedDbTransactionProviderTests
         // Arrange
         var jsRuntime = new Mock<IJSRuntime>().Object;
         IndexedDbDatabase indexedDbDatabase = null!;
-        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
-        var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
 
         // Act
         var act = () => new IndexedDbTransactionProvider<object>(jsRuntime, indexedDbDatabase, jsExpressionBuilder);
@@ -116,10 +113,7 @@ public class IndexedDbTransactionProviderTests
         var factory = new Mock<IIndexedDbTransactionProviderFactory>();
         factory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
         var indexedDbDatabase = new Mock<IndexedDbDatabase>(factory.Object).Object;
-        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>();
-        var memberCallTranslatorFactory = new Mock<IMemberTranslatorFactory>();
-        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory.Object, memberCallTranslatorFactory.Object, binaryTranslatorFactory.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         var transactionProvider = new IndexedDbTransactionProvider<object>(jsRuntime, indexedDbDatabase, jsExpressionBuilder);
         Expression<Func<object, bool>> expression = _ => true;
 

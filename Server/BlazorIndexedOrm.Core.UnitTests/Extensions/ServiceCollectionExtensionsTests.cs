@@ -2,6 +2,7 @@
 using BlazorIndexedOrm.Core.Transaction.JsExpression;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.UnaryTranslation;
 using BlazorIndexedOrm.Core.UnitTests.Mock.IndexedDbDatabase;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -113,5 +114,23 @@ public class ServiceCollectionExtensionsTests
         var transactionProviderFactory = serviceProvider.GetRequiredService<IIndexedDbTransactionProviderFactory>();
         Assert.NotNull(transactionProviderFactory);
         Assert.IsType<IndexedDbTransactionProviderFactory>(transactionProviderFactory);
+    }
+
+    [Fact]
+    public void RegisterIndexedDbDDatabase_ShouldRegisterUnaryTranslatorFactory()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+
+        // Act
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
+        
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var unaryTranslatorFactory = serviceProvider.GetRequiredService<IUnaryTranslatorFactory>();
+        Assert.NotNull(unaryTranslatorFactory);
+        Assert.IsType<JsUnaryTranslatorFactory>(unaryTranslatorFactory);
     }
 }

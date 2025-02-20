@@ -13,7 +13,7 @@ public class JsMemberTranslatorFactory : IMemberTranslatorFactory
 
     public JsMemberTranslatorFactory()
     {
-        var translators = new Dictionary<MemberInfo, TranslateMember>();
+        var translators = new Dictionary<MemberInfo, TranslateMember>(new MemberInfoEqualityComparer());
         var blazorIndexedOrmTypes = Assembly.GetExecutingAssembly().GetTypes();
 
         foreach (Type type in blazorIndexedOrmTypes.Where(x => x.IsClass && x.GetInterface(nameof(IMemberTranslator)) != null))

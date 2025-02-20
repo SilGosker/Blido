@@ -4,6 +4,7 @@ using System.Text;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.UnaryTranslation;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression;
 
@@ -12,16 +13,22 @@ public class JsExpressionBuilder : IExpressionBuilder
     private readonly IMethodCallTranslatorFactory _methodCallTranslatorFactory;
     private readonly IMemberTranslatorFactory _memberTranslatorFactory;
     private readonly IBinaryTranslatorFactory _binaryTranslatorFactory;
+    private readonly IUnaryTranslatorFactory _unaryTranslatorFactory;
     private readonly StringBuilder _builder = new();
 
-    public JsExpressionBuilder(IMethodCallTranslatorFactory methodCallTranslatorFactory, IMemberTranslatorFactory memberTranslatorFactory, IBinaryTranslatorFactory binaryTranslatorFactory)
+    public JsExpressionBuilder(IMethodCallTranslatorFactory methodCallTranslatorFactory,
+        IMemberTranslatorFactory memberTranslatorFactory,
+        IBinaryTranslatorFactory binaryTranslatorFactory,
+        IUnaryTranslatorFactory unaryTranslatorFactory)
     {
         ArgumentNullException.ThrowIfNull(methodCallTranslatorFactory);
         ArgumentNullException.ThrowIfNull(memberTranslatorFactory);
         ArgumentNullException.ThrowIfNull(binaryTranslatorFactory);
+        ArgumentNullException.ThrowIfNull(unaryTranslatorFactory);
         _methodCallTranslatorFactory = methodCallTranslatorFactory;
         _memberTranslatorFactory = memberTranslatorFactory;
         _binaryTranslatorFactory = binaryTranslatorFactory;
+        _unaryTranslatorFactory = unaryTranslatorFactory;
     }
 
     public string ProcessExpression(LambdaExpression expression)
@@ -46,7 +53,7 @@ public class JsExpressionBuilder : IExpressionBuilder
                 JsMemberExpressionBuilder.AppendMember(_builder, _memberTranslatorFactory, member, InternalProcessExpression);
                 break;
             case UnaryExpression unary:
-                JsUnaryExpressionBuilder.AppendUnary(_builder, unary, InternalProcessExpression);
+                JsUnaryExpressionBuilder.AppendUnary(_builder, _unaryTranslatorFactory, unary, InternalProcessExpression);
                 break;
             case LambdaExpression lambda:
                 JsLambdaExpressionBuilder.AppendLambda(_builder, lambda, InternalProcessExpression);

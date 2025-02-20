@@ -10,7 +10,12 @@ public class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
         if (ReferenceEquals(x, y)) return true;
         if (x is null) return false;
         if (y is null) return false;
-        if (x.GetType() != y.GetType()) return false;
+        if ((x is not PropertyInfo and not FieldInfo)
+            || (y is not PropertyInfo and not FieldInfo))
+        {
+            return false;
+        }
+
         var xType = x.DeclaringType;
         var yType = y.DeclaringType;
 
@@ -48,8 +53,8 @@ public class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
     internal bool IsAnonymousType(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
-        var hasCompilerGeneratedAttribute = type.GetCustomAttribute<CompilerGeneratedAttribute>(false) != null;
-        var nameContainsAnonymousType = type.FullName?.Contains("AnonymousType") ?? false;
-        return hasCompilerGeneratedAttribute && nameContainsAnonymousType;
+        return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+            && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+            && type.Attributes.HasFlag(TypeAttributes.NotPublic);
     }
 }

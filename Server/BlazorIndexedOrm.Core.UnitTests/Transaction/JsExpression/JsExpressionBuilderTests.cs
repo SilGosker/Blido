@@ -3,6 +3,7 @@ using System.Text;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.BinaryTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MemberTranslation;
 using BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation;
+using BlazorIndexedOrm.Core.Transaction.JsExpression.UnaryTranslation;
 using Moq;
 
 namespace BlazorIndexedOrm.Core.Transaction.JsExpression;
@@ -16,9 +17,10 @@ public class JsExpressionBuilderTests
         IMethodCallTranslatorFactory methodCallTranslatorFactory = null!;
         IMemberTranslatorFactory memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
         IBinaryTranslatorFactory binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        IUnaryTranslatorFactory unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
 
         // Act
-        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -32,9 +34,10 @@ public class JsExpressionBuilderTests
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
         IMemberTranslatorFactory memberTranslatorFactory = null!;
         IBinaryTranslatorFactory binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        IUnaryTranslatorFactory unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
 
         // Act
-        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -48,13 +51,31 @@ public class JsExpressionBuilderTests
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
         var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
         IBinaryTranslatorFactory binaryTranslatorFactory = null!;
+        IUnaryTranslatorFactory unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
 
         // Act
-        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
         Assert.Equal("binaryTranslatorFactory", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullUnaryTranslatorFactory_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
+        var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        IUnaryTranslatorFactory unaryTranslatorFactory = null!;
+
+        // Act
+        var act = () => new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
+
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(act);
+        Assert.Equal("unaryTranslatorFactory", exception.ParamName);
     }
 
     [Fact]
@@ -64,7 +85,8 @@ public class JsExpressionBuilderTests
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
         var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
         var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         LambdaExpression expression = null!;
 
         // Act
@@ -82,7 +104,8 @@ public class JsExpressionBuilderTests
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
         var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
         var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         var expression = Expression.Constant(1);
 
         // Act
@@ -97,16 +120,17 @@ public class JsExpressionBuilderTests
     {
         // Arrange
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
-        var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
+        var memberTranslatorFactory = new JsMemberTranslatorFactory();
         var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         var expression = Expression.Property(Expression.Constant("test"), "Length");
         
         // Act
         string s = jsExpressionBuilder.ProcessExpression(Expression.Lambda(expression));
         
         // Assert
-        Assert.Equal("()=>\"test\".Length", s);
+        Assert.Equal("()=>\"test\".length", s);
     }
 
     [Fact]
@@ -116,7 +140,8 @@ public class JsExpressionBuilderTests
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
         var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
         var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var unaryTranslatorFactory = new JsUnaryTranslatorFactory();
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory );
         var expression = Expression.Not(Expression.Constant(true));
 
         // Act
@@ -133,7 +158,8 @@ public class JsExpressionBuilderTests
         var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
         var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
         var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         var expression = Expression.Lambda(Expression.Lambda(Expression.Constant(1)));
         // Act
         string s = jsExpressionBuilder.ProcessExpression(expression);
@@ -146,9 +172,10 @@ public class JsExpressionBuilderTests
     {
         // Arrange
         var methodCallTranslatorFactory = new JsMethodCallTranslatorFactory();
-        var memberTranslatorFactory = new JsMemberTranslatorFactory();
-        var binaryTranslatorFactory = new JsBinaryTranslatorFactory();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        var unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         var method = typeof(string).GetMethod(nameof(string.Substring), new[] { typeof(int), typeof(int) })!;
         var expression = Expression.Call(Expression.Constant("test"), method, Expression.Constant(1), Expression.Constant(2));
         
@@ -163,10 +190,11 @@ public class JsExpressionBuilderTests
     public void ProcessExpression_WithParameterExpression_CallsJsParameterExpressionBuilderAppendParameter()
     {
         // Arrange
-        var methodCallTranslatorFactory = new JsMethodCallTranslatorFactory();
-        var memberTranslatorFactory = new JsMemberTranslatorFactory();
-        var binaryTranslatorFactory = new JsBinaryTranslatorFactory();
-        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory);
+        var methodCallTranslatorFactory = new Mock<IMethodCallTranslatorFactory>().Object;
+        var memberTranslatorFactory = new Mock<IMemberTranslatorFactory>().Object;
+        var binaryTranslatorFactory = new Mock<IBinaryTranslatorFactory>().Object;
+        var unaryTranslatorFactory = new Mock<IUnaryTranslatorFactory>().Object;
+        var jsExpressionBuilder = new JsExpressionBuilder(methodCallTranslatorFactory, memberTranslatorFactory, binaryTranslatorFactory, unaryTranslatorFactory);
         var expression = Expression.Parameter(typeof(int), "x");
         var result = Expression.Constant("test");
 

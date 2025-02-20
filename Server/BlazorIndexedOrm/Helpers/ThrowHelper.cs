@@ -45,6 +45,28 @@ public class ThrowHelper
         throw new NotSupportedException(sb.ToString());
     }
 
+    public static void ThrowUnsupportedException(UnaryExpression unary)
+    {
+        ArgumentNullException.ThrowIfNull(unary);
+        StringBuilder sb = new("Using the unary expression ");
+        if (unary.NodeType == ExpressionType.Convert)
+        {
+            sb.Append("Convert(");
+            sb.Append(unary.Operand.Type);
+            sb.Append(" to ");
+            sb.Append(unary.Type);
+        }
+        else
+        {
+            sb.Append(unary.NodeType);
+            sb.Append('(');
+            sb.Append(unary.Operand.Type);
+        }
+        
+        sb.Append(") is not supported. Use a different expression or overload");
+        throw new NotSupportedException(sb.ToString());
+    }
+
     public static void ThrowDictionaryIsNotReadonlyException<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> readonlyDictionary, out Dictionary<TKey, TValue> dictionary)
         where TKey : notnull
     {

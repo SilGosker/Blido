@@ -6,15 +6,16 @@ namespace BlazorIndexedOrm.Core.Transaction.JsExpression;
 
 public class JsMemberExpressionBuilder
 {
-    public static void AppendMember(StringBuilder sb, IMemberTranslatorFactory memberTranslatorFactory, MemberExpression expression, ProcessExpression processExpression)
+    public static void AppendMember(StringBuilder sb, IMemberTranslatorFactory memberTranslatorFactory,
+        MemberExpression expression, ProcessExpression processExpression)
     {
-#pragma warning disable CS8600
+#nullable disable
         if (memberTranslatorFactory.TryGetValue(expression.Member, out TranslateMember translateMember))
-#pragma warning restore CS8600
         {
             translateMember(sb, expression, processExpression);
             return;
         }
+#nullable restore
 
         string name = NameResolver.ResolveObjectFieldName(expression.Member);
 

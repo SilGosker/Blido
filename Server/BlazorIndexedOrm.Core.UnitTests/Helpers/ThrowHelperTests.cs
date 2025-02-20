@@ -62,6 +62,48 @@ public class ThrowHelperTests
     }
 
     [Fact]
+    public void ThrowUnSupportedException_WithNullUnaryExpression_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        UnaryExpression unary = null!;
+
+        // Act
+        Action act = () => ThrowHelper.ThrowUnsupportedException(unary);
+        
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(act);
+        Assert.Equal("unary", exception.ParamName);
+    }
+
+    [Fact]
+    public void ThrowUnSupportedException_WithUnaryExpression_ShouldThrowUnSupportedException()
+    {
+        // Arrange
+        var unary = Expression.Not(Expression.Constant(true));
+        
+        // Act
+        Action act = () => ThrowHelper.ThrowUnsupportedException(unary);
+        
+        // Assert
+        var exception = Assert.Throws<NotSupportedException>(act);
+        Assert.Equal("Using the unary expression Not(System.Boolean) is not supported. Use a different expression or overload", exception.Message);
+    }
+
+    [Fact]
+    public void ThrowUnSupportedException_WithConvertUnaryExpression_ShouldThrowUnSupportedException()
+    {
+        // Arrange
+        var unary = Expression.Convert(Expression.Constant(1), typeof(long));
+
+        // Act
+        Action act = () => ThrowHelper.ThrowUnsupportedException(unary);
+
+        // Assert
+        var exception = Assert.Throws<NotSupportedException>(act);
+        Assert.Equal("Using the unary expression Convert(System.Int32 to System.Int64) is not supported. Use a different expression or overload", exception.Message);
+    }
+
+    [Fact]
     public void ThrowDictionaryIsNotReadonlyException_WhenDictionaryIsNotReadonly_DoesNotThrow()
     {
         // Arrange

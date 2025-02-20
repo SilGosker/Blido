@@ -22,6 +22,7 @@ public class StringBuilderExtensionsTests
     [Theory]
     [InlineData("Hello", "Hello")] // Simple string
     [InlineData("Hello \"World\"", "Hello \\\"World\\\"")] // String with double quotes
+    [InlineData("Hello \'World'", "Hello \\\'World\\\'")] // String with double quotes
     [InlineData("Path\\To\\File", "Path\\\\To\\\\File")] // String with backslashes
     [InlineData("Line1\nLine2", "Line1\\nLine2")] // String with newlines
     [InlineData("\tTabbed", "\\tTabbed")] // String with tabs
@@ -35,7 +36,7 @@ public class StringBuilderExtensionsTests
         var sb = new StringBuilder();
 
         // Act
-        sb.AppendEscaped(input.AsSpan());
+        sb.AppendEscaped(input);
 
         // Assert
         Assert.Equal(expected, sb.ToString());

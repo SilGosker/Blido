@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
 
-namespace BlazorIndexedOrm.Core.Transaction.JsExpression.MethodCallTranslation.Enumerable;
+namespace Blido.Core.Transaction.JsExpression.MethodCallTranslation.Enumerable;
 
 public class LongCountMethodCallTranslatorTests
 {
@@ -10,8 +10,10 @@ public class LongCountMethodCallTranslatorTests
     {
         // Arrange
         var supportedMethods = LongCountMethodCallTranslator.SupportedMethods;
+
         // Act
         var containsNull = supportedMethods.Contains(null);
+        
         // Assert
         Assert.False(containsNull);
     }

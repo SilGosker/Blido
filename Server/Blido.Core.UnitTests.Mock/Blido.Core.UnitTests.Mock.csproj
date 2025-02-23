@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>Blido.Core</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Blido\Blido.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Transaction\JsExpression\MethodCallTranslation\" />
+	</ItemGroup>
+
+</Project>

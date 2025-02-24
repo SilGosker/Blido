@@ -45,7 +45,7 @@ public class CountMethodCallTranslatorTests
     }
 
     [Fact]
-    public void TranslateMethodCall_WithExpression_ShouldAppendFilterAndLength()
+    public void TranslateMethodCall_WithExpression_ShouldAppendReduce()
     {
         // Arrange
         var method = typeof(System.Linq.Enumerable).GetMethods().First(e => e.Name == nameof(System.Linq.Enumerable.Count)
@@ -74,6 +74,6 @@ public class CountMethodCallTranslatorTests
         CountMethodCallTranslator.TranslateMethodCall(sb, expression, processExpression);
 
         // Assert
-        Assert.Equal("[].filter(i=>i>0).length", sb.ToString());
+        Assert.Equal("[].reduce((_t,_e)=>((i=>i>0)(_e)?_t+1:_t).length", sb.ToString());
     }
 }

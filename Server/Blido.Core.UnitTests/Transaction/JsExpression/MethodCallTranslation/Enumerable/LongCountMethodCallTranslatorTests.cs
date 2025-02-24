@@ -75,6 +75,6 @@ public class LongCountMethodCallTranslatorTests
         LongCountMethodCallTranslator.TranslateMethodCall(sb, expression, processExpression);
 
         // Assert
-        Assert.Equal("[].reduce((_t,_e)=>(i => i > 0)(_e)?_t+1:_t)", sb.ToString());
+        Assert.Equal("[].reduce((_t,_e)=>(i => i > 0)(_e)?_t+1:_t,0)", sb.ToString());
     }
 }

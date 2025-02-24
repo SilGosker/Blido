@@ -12,9 +12,9 @@ public class LongCountMethodCallTranslator : IMethodCallTranslator
             sb.Append(".length");
             return;
         }
-        sb.Append(".reduce((_t,_e)=>((");
+        sb.Append(".reduce((_t,_e)=>(");
         processNext(expression.Arguments[1]);
-        sb.Append(")(_e)?_t+1:_t).length");
+        sb.Append(")(_e)?_t+1:_t)");
     };
 
     public static MethodInfo[] SupportedMethods => typeof(System.Linq.Enumerable).GetMethods()

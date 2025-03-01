@@ -14,7 +14,7 @@ public abstract class IndexedDbDatabase
     protected IndexedDbDatabase(IIndexedDbTransactionProviderFactory transactionProviderFactory)
     {
         ArgumentNullException.ThrowIfNull(transactionProviderFactory);
-        Name = NameResolver.ResolveIndexedDbStoreName(GetType());
+        Name = NameResolver.ResolveIndexedDbName(GetType());
         _transactionProviderFactory = transactionProviderFactory;
         _versionTask = _transactionProviderFactory.JsRuntime.InvokeAsync<ulong>(JsMethodNameConstants.GetVersion, new[] { this.Name });
         transactionProviderFactory.Database = this;

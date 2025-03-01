@@ -29,7 +29,7 @@ public static class NameResolver
         return attribute.Name;
     }
 
-    public static string ResolveIndexedDbStoreName(Type type)
+    public static string ResolveIndexedDbName(Type type)
     {
         var attribute = type.GetCustomAttribute<IndexedDbDatabaseNameAttribute>();
         if (attribute is not null)

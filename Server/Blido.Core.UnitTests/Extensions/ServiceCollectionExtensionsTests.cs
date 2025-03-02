@@ -1,5 +1,6 @@
 ﻿using Blido.Core.Transaction;
 using Blido.Core.Transaction.JsExpression;
+using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
 using Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 using Blido.Core.Transaction.JsExpression.UnaryTranslation;
@@ -81,6 +82,43 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void RegisterIndexedDbDatabase_ShouldRegisterBinaryTranslatorFactory()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+
+        // Act
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
+
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var binaryTranslatorFactory = serviceProvider.GetRequiredService<IBinaryTranslatorFactory>();
+        Assert.NotNull(binaryTranslatorFactory);
+        Assert.IsType<JsBinaryTranslatorFactory>(binaryTranslatorFactory);
+    }
+
+    [Fact]
+    public void RegisterIndexedDbDatabase_ShouldRegisterUnaryTranslatorFactory()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+        
+        // Act
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
+
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var unaryTranslatorFactory = serviceProvider.GetRequiredService<IUnaryTranslatorFactory>();
+        Assert.NotNull(unaryTranslatorFactory);
+        Assert.IsType<JsUnaryTranslatorFactory>(unaryTranslatorFactory);
+    }
+
+
+    [Fact]
     public void RegisterIndexedDbDatabase_ShouldRegisterJsExpressionBuilder()
     {
         // Arrange
@@ -113,23 +151,5 @@ public class ServiceCollectionExtensionsTests
         var transactionProviderFactory = serviceProvider.GetRequiredService<IObjectStoreFactory>();
         Assert.NotNull(transactionProviderFactory);
         Assert.IsType<ObjectStoreFactory>(transactionProviderFactory);
-    }
-
-    [Fact]
-    public void RegisterIndexedDbDDatabase_ShouldRegisterUnaryTranslatorFactory()
-    {
-        // Arrange
-        var serviceCollection = new ServiceCollection();
-        var mockJsRuntime = new Mock<IJSRuntime>().Object;
-
-        // Act
-        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
-        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
-        
-        // Assert
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        var unaryTranslatorFactory = serviceProvider.GetRequiredService<IUnaryTranslatorFactory>();
-        Assert.NotNull(unaryTranslatorFactory);
-        Assert.IsType<JsUnaryTranslatorFactory>(unaryTranslatorFactory);
     }
 }

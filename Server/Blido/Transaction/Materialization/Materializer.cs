@@ -15,6 +15,9 @@ public class Materializer
         CancellationToken cancellationToken)
     where TEntity : class
     {
+        ArgumentNullException.ThrowIfNull(conditions);
+        ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+
         string[]? expressions = null;
 
         if (conditions.HasConditions)

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Blido.Core.Transaction;
+namespace Blido.Core.Transaction.Configuration;
 
 public interface ITransactionFilterProvider<TEntity, out TSelf>
     where TSelf : ITransactionFilterProvider<TEntity, TSelf>

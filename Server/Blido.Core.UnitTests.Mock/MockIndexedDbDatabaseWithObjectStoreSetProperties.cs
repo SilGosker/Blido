@@ -2,9 +2,9 @@
 
 namespace Blido.Core;
 
-public class MockIndexedDbDatabaseWithObjectStoreSetProperties : IndexedDbDatabase
+public class MockIndexedDbDatabaseWithObjectStoreSetProperties : IndexedDbContext
 {
-    public MockIndexedDbDatabaseWithObjectStoreSetProperties(IIndexedDbTransactionProviderFactory transactionProviderFactory)
+    public MockIndexedDbDatabaseWithObjectStoreSetProperties(IObjectStoreFactory transactionProviderFactory)
         : base(transactionProviderFactory)
     {
     }

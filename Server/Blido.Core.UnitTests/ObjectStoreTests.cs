@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Blido.Core.Transaction;
+using Microsoft.JSInterop;
 using Moq;
 
 namespace Blido.Core;
@@ -10,10 +11,14 @@ public class ObjectStoreTests
     public void Constructor_WithNullProvider_ThrowsArgumentNullException()
     {
         // Arrange
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        objectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
         ITransactionProvider<object> provider = null!;
-        
+        IndexedDbDatabase database = new(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
+
         // Act
-        Action act = () => new ObjectStore<object>(provider);
+        Action act = () => new ObjectStore<object>(database, provider);
         
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -21,13 +26,32 @@ public class ObjectStoreTests
     }
 
     [Fact]
+    public void Constructor_WithNullDatabase_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var provider = new Mock<ITransactionProvider<object>>().Object;
+        IndexedDbDatabase database = null!;
+
+        // Act
+        Action act = () => new ObjectStore<object>(database, provider);
+
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(act);
+        Assert.Equal("database", exception.ParamName);
+    }
+
+    [Fact]
     public void Constructor_WithValidProvider_SetsName()
     {
         // Arrange
         var provider = new Mock<ITransactionProvider<object>>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        objectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
+        IndexedDbDatabase database = new(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
 
         // Act
-        var objectStoreSet = new ObjectStore<object>(provider);
+        var objectStoreSet = new ObjectStore<object>(database, provider);
 
         // Assert
         Assert.Equal("Object", objectStoreSet.Name);
@@ -38,7 +62,11 @@ public class ObjectStoreTests
     {
         // Arrange
         var provider = new Mock<ITransactionProvider<object>>().Object;
-        var objectStoreSet = new ObjectStore<object>(provider);
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        objectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
+        IndexedDbDatabase database = new(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
+        var objectStoreSet = new ObjectStore<object>(database, provider);
 
         // Act
         Action act = () => objectStoreSet.Where(null!);
@@ -53,7 +81,12 @@ public class ObjectStoreTests
     {
         // Arrange
         var providerMock = new Mock<ITransactionProvider<object>>();
-        var objectStoreSet = new ObjectStore<object>(providerMock.Object);
+        var provider = providerMock.Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        objectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
+        IndexedDbDatabase database = new(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
+        var objectStoreSet = new ObjectStore<object>(database, provider);
         Expression<Func<object, bool>> expression = _ => true;
 
         // Act
@@ -68,7 +101,11 @@ public class ObjectStoreTests
     {
         // Arrange
         var provider = new Mock<ITransactionProvider<object>>().Object;
-        var objectStoreSet = new ObjectStore<object>(provider);
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        objectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime);
+        IndexedDbDatabase database = new(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
+        var objectStoreSet = new ObjectStore<object>(database, provider);
         Expression<Func<object, bool>> expression = _ => true;
 
         // Act

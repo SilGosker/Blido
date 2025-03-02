@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.JSInterop;
 
-namespace Blido.Core.Transaction;
+namespace Blido.Core.Transaction.Configuration;
 
 public class TransactionConditions<TEntity> where TEntity : class
 {

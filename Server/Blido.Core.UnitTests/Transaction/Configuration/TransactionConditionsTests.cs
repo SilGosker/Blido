@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Blido.Core.Transaction;
+namespace Blido.Core.Transaction.Configuration;
 
 public class TransactionConditionsTests
 {
@@ -13,7 +13,7 @@ public class TransactionConditionsTests
 
         // Act
         Action act = () => conditions.AddCondition(expression);
-        
+
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
         Assert.Equal("expression", exception.ParamName);
@@ -24,10 +24,10 @@ public class TransactionConditionsTests
     {
         // Arrange
         var conditions = new TransactionConditions<object>();
-        
+
         // Act
         var result = conditions.HasConditions;
-        
+
         // Assert
         Assert.False(result);
 
@@ -57,12 +57,12 @@ public class TransactionConditionsTests
         var conditions = new TransactionConditions<object>();
         for (int i = 0; i < amount; i++)
         {
-            conditions.AddCondition(e => true); 
+            conditions.AddCondition(e => true);
         }
 
         // Act
         var result = conditions.Count;
-        
+
         // Assert
         Assert.Equal(amount, result);
     }
@@ -118,10 +118,10 @@ public class TransactionConditionsTests
         var conditions = new TransactionConditions<object>();
         conditions.AddCondition(e => false);
         var entity = new object();
-        
+
         // Act
         var result = conditions.FullFillsConditions(entity);
-        
+
         // Assert
         Assert.False(result);
     }

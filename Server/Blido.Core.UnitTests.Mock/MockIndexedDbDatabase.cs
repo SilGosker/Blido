@@ -2,9 +2,9 @@
 
 namespace Blido.Core;
 
-public class MockIndexedDbDatabase : IndexedDbDatabase
+public class MockIndexedDbDatabase : IndexedDbContext
 {
-    public MockIndexedDbDatabase(IIndexedDbTransactionProviderFactory transactionProviderFactory) : base(transactionProviderFactory)
+    public MockIndexedDbDatabase(IObjectStoreFactory transactionProviderFactory) : base(transactionProviderFactory)
     {
     }
 }

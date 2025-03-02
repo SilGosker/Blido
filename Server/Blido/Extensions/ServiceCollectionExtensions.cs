@@ -11,7 +11,7 @@ namespace Blido.Core.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterIndexedDbDatabase<TDatabase>(this IServiceCollection serviceCollection)
-        where TDatabase : IndexedDbDatabase
+        where TDatabase : IndexedDbContext
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
         serviceCollection.AddScoped<TDatabase>();
@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<IBinaryTranslatorFactory, JsBinaryTranslatorFactory>();
         serviceCollection.AddSingleton<IUnaryTranslatorFactory, JsUnaryTranslatorFactory>();
         serviceCollection.AddScoped<IExpressionBuilder, JsExpressionBuilder>();
-        serviceCollection.AddScoped<IIndexedDbTransactionProviderFactory, IndexedDbTransactionProviderFactory>();
+        serviceCollection.AddScoped<IObjectStoreFactory, ObjectStoreFactory>();
 
         return serviceCollection;
     }

@@ -110,9 +110,9 @@ public class ServiceCollectionExtensionsTests
 
         // Assert
         var serviceProvider = serviceCollection.BuildServiceProvider();
-        var transactionProviderFactory = serviceProvider.GetRequiredService<IIndexedDbTransactionProviderFactory>();
+        var transactionProviderFactory = serviceProvider.GetRequiredService<IObjectStoreFactory>();
         Assert.NotNull(transactionProviderFactory);
-        Assert.IsType<IndexedDbTransactionProviderFactory>(transactionProviderFactory);
+        Assert.IsType<ObjectStoreFactory>(transactionProviderFactory);
     }
 
     [Fact]

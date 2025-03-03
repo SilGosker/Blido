@@ -23,7 +23,6 @@ export function average(json: string) : Promise<number> {
             if (args.matches(object)) {
                 sum += args.selector(object) as number;
                 count++;
-                return;
             }
 
             cursor.continue();

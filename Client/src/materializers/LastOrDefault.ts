@@ -20,7 +20,6 @@ export function lastOrDefault(json: string) : Promise<unknown | null> {
             const object = cursor.value;
             if (args.matches(object)) {
                 last = object;
-                return;
             }
 
             cursor.continue();

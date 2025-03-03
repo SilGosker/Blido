@@ -21,7 +21,6 @@ export function sum(json: string) : Promise<number> {
             const object = cursor.value;
             if (args.matches(object)) {
                 sum += args.selector(object) as number;
-                return;
             }
 
             cursor.continue();

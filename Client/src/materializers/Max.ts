@@ -27,12 +27,10 @@ export function max(json: string) : Promise<number> {
                 const potentialMax = args.selector(object) as number;
                 if (max === null) {
                     max = potentialMax;
-                    return;
                 }
                 if (potentialMax > max) {
                     max = potentialMax;
                 }
-                return;
             }
 
             cursor.continue();

@@ -11,7 +11,7 @@ export function toArray(json: string) : Promise<unknown[]> {
 
         request.addEventListener('error', reject);
         request.addEventListener('success', () => {
-            const cursor = request.result as IDBCursorWithValue;
+            const cursor = request.result;
 
             if (!cursor) {
                 resolve(result);
@@ -21,9 +21,7 @@ export function toArray(json: string) : Promise<unknown[]> {
             const object = cursor.value;
             if (args.matches(object)) {
                 result.push(object);
-                return;
             }
-
             cursor.continue();
         });
     });

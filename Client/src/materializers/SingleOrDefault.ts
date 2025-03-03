@@ -24,7 +24,6 @@ export function singleOrDefault(json: string) : Promise<unknown> {
                     return;
                 }
                 result = object;
-                return;
             }
 
             cursor.continue();

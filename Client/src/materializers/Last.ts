@@ -24,7 +24,6 @@ export function last(json: string) : Promise<unknown> {
             const object = cursor.value;
             if (args.matches(object)) {
                 last = object;
-                return;
             }
 
             cursor.continue();

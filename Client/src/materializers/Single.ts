@@ -26,8 +26,8 @@ export function single(json: string) : Promise<unknown> {
             if (args.matches(object)) {
                 if (found) {
                     reject('More than one element satisfies the condition in predicate');
+                    return;
                 }
-                return;
             }
 
             cursor.continue();

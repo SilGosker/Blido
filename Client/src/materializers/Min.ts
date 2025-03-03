@@ -27,12 +27,10 @@ export function min(json: string) : Promise<number> {
                 const potentialMin = args.selector(object) as number;
                 if (min === null) {
                     min = potentialMin;
-                    return;
                 }
                 if (potentialMin < min) {
                     min = potentialMin;
                 }
-                return;
             }
 
             cursor.continue();

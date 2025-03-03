@@ -21,7 +21,6 @@ export function count(json: string) : Promise<number> {
             const object = cursor.value;
             if (args.matches(object)) {
                 count++;
-                return;
             }
 
             cursor.continue();

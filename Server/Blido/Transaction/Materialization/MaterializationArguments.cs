@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using System;
 
 namespace Blido.Core.Transaction.Materialization;
 
@@ -15,5 +14,8 @@ public class MaterializationArguments
     public required ulong Version { get; set; }
 
     [JsonPropertyName("parsedExpressions")]
-    public required string[]? ParsedExpressions { get; set; }
+    public string[]? ParsedExpressions { get; set; }
+
+    [JsonPropertyName("parsedSelector")]
+    public string? Selector { get; set; }
 }

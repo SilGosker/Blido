@@ -1,0 +1,41 @@
+// @ts-ignore
+import {processArguments} from "../ProcessArguments";
+import {startQuery} from "../StartQuery";
+
+export function max(json: string) : Promise<number> {
+    return new Promise(async (resolve, reject) => {
+        const args = processArguments(json);
+
+        const request = await startQuery(args.databaseName, args.currentVersion, args.objectStoreName);
+        let max : number | null = null;
+
+        request.addEventListener('error', reject);
+        request.addEventListener('success', () => {
+            const cursor = request.result as IDBCursorWithValue;
+
+            if (!cursor) {
+                if (max === null) {
+                    reject('Source contains no elements.');
+                    return;
+                }
+                resolve(max);
+                return;
+            }
+
+            const object = cursor.value;
+            if (args.matches(object)) {
+                const potentialMax = args.selector(object) as number;
+                if (max === null) {
+                    max = potentialMax;
+                    return;
+                }
+                if (potentialMax > max) {
+                    max = potentialMax;
+                }
+                return;
+            }
+
+            cursor.continue();
+        });
+    });
+}

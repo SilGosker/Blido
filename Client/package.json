@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npx webpack",
-    "copy": "ncp ./dist/load.js ../Server/BlazorIndexedOrm/wwwroot/BlazorOrm.min.js",
+    "copy": "ncp ./dist/load.js ../Server/Blido/wwwroot/Blido.min.js",
     "buildcopy": "npm run build && npm run copy"
   },
   "keywords": [],

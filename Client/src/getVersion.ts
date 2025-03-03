@@ -1,4 +1,4 @@
-import {connectToDatabase} from "./connectToDatabase";
+import {connectToDatabase} from "./ConnectToDatabase";
 
 export interface GetVersionInterface {
     (database: string) : Promise<number>;

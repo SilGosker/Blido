@@ -3,7 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     mode: 'development', // Use 'development' for easier debugging
-    entry: './src/load.ts', // Entry point of your TypeScript file
+    entry: './src/Load.ts', // Entry point of your TypeScript file
     output: {
         filename: 'load.js', // Output file name
         path: path.resolve(__dirname, 'dist'), // Output directory

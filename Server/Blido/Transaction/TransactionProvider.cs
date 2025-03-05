@@ -33,33 +33,33 @@ public class TransactionProvider<TEntity> : ITransactionProvider<TEntity> where 
 
     public ITransactionProvider<TEntity> Where(Expression<Func<TEntity, bool>> expression)
     {
+        ArgumentNullException.ThrowIfNull(expression);
         _transactionConditions.AddCondition(expression);
         return this;
     }
 
-    public Task<TResult> ExecuteAsync<TResult>(string methodName, Expression<Func<TEntity, TResult>> selector, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<TResult> ExecuteAsync<TResult>(string methodName, CancellationToken cancellationToken = default)
+    public async Task<TResult> ExecuteAsync<TResult>(string methodName, Expression<Func<TEntity, TResult>> selector, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+        ArgumentNullException.ThrowIfNull(selector);
+
         if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
         {
-            return await Materializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
-                _transactionConditions, jsMethodName, cancellationToken);
+            return await SelectorMaterializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore,
+                _jsExpressionBuilder,
+                _transactionConditions, selector, jsMethodName, cancellationToken);
         }
 
         throw new ArgumentException($"Method name '{methodName}' is not supported.");
     }
 
-    public async Task<TEntity> ExecuteAsync(string methodName, CancellationToken cancellationToken = default)
+    public async Task<TResult> ExecuteAsync<TResult>(string methodName, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+
         if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
         {
-            return await Materializer.ExecuteAsync<TEntity, TEntity>(_jsRuntime, _objectStore, _jsExpressionBuilder,
+            return await Materializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
                 _transactionConditions, jsMethodName, cancellationToken);
         }
 

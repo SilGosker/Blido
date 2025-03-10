@@ -1,6 +1,6 @@
 export function processArguments(json: string): Arguments {
     const parsed = JSON.parse(json) as
-        { parsedSelector: string, database: string, objectStore: string, version: number, parsedExpressions: string[] | undefined };
+        { parsedSelector: string, database: string, objectStore: string, version: number, parsedExpressions: string[] | undefined, identifiers: object };
 
     let matches = (_: unknown) => true;
     if (parsed.parsedExpressions && parsed.parsedExpressions.length) {
@@ -18,7 +18,8 @@ export function processArguments(json: string): Arguments {
         currentVersion: parsed.version,
         matches,
         objectStoreName: parsed.objectStore,
-        selector
+        selector,
+        id: parsed.identifiers
     }
 }
 
@@ -28,4 +29,5 @@ export interface Arguments {
     currentVersion: number,
     matches: (entity: unknown) => boolean;
     selector: (entity: unknown) => number | unknown;
+    id: string | number | object | null;
 }

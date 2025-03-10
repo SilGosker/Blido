@@ -13,6 +13,7 @@ import {single} from "./materializers/Single";
 import {singleOrDefault} from "./materializers/SingleOrDefault";
 import {sum} from "./materializers/Sum";
 import {toArray} from "./materializers/ToArray";
+import {find} from "./materializers/Find";
 
 class BlidoContext {
     private getVersion: (database: string) => Promise<number>;
@@ -30,7 +31,7 @@ class BlidoContext {
     private singleOrDefault: (json: string) => Promise<unknown>;
     private sum: (json: string) => Promise<unknown>;
     private toArray: (json: string) => Promise<unknown[]>;
-
+    private find: (json: string) => Promise<unknown>;
     public constructor() {
         this.firstOrDefault = firstOrDefault;
         this.getVersion = getVersion;
@@ -47,6 +48,7 @@ class BlidoContext {
         this.singleOrDefault = singleOrDefault;
         this.sum = sum;
         this.toArray = toArray;
+        this.find = find;
     }
 }
 

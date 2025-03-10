@@ -1,13 +1,13 @@
 // @ts-ignore
 import {processArguments} from "../ProcessArguments";
-import {startQuery} from "../StartQuery";
+import {startCursor} from "../StartCursor";
 
 export function toArray(json: string) : Promise<unknown[]> {
     return new Promise(async (resolve, reject) => {
         const args = processArguments(json);
 
         const result: unknown[] = [];
-        const request = await startQuery(args.databaseName, args.currentVersion, args.objectStoreName);
+        const request = await startCursor(args.databaseName, args.currentVersion, args.objectStoreName);
 
         request.addEventListener('error', reject);
         request.addEventListener('success', () => {

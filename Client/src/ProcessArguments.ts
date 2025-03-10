@@ -1,6 +1,7 @@
 export function processArguments(json: string): Arguments {
     const parsed = JSON.parse(json) as
-        { selector: string, database: string, objectStore: string, version: number, parsedExpressions: string[] | undefined };
+        { parsedSelector: string, database: string, objectStore: string, version: number, parsedExpressions: string[] | undefined };
+
     let matches = (_: unknown) => true;
     if (parsed.parsedExpressions && parsed.parsedExpressions.length) {
         const functions = parsed.parsedExpressions.map(x => eval(x));
@@ -8,8 +9,8 @@ export function processArguments(json: string): Arguments {
     }
 
     let selector = undefined;
-    if (parsed.selector) {
-        selector = eval(parsed.selector);
+    if (parsed.parsedSelector) {
+        selector = eval(parsed.parsedSelector);
     }
 
     return {

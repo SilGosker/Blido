@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
-using Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 
-namespace Blido.Core.UnitTests.Mock.Transaction.JsExpression.MethodCallTranslation;
+namespace Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 
 public class MockUnsupportedMethodCallTranslator : IMethodCallTranslator
 {

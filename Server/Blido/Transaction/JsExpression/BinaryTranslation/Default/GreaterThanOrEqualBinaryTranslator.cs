@@ -13,19 +13,8 @@ public class GreaterThanOrEqualBinaryTranslator : IBinaryTranslator
         builder.Append(')');
     };
 
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression binaryExpression, out TranslateBinaryHash hash) =>
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        hash = default;
-        if (binaryExpression.NodeType == ExpressionType.GreaterThanOrEqual)
-        {
-            hash = new TranslateBinaryHash((int)CoreBinaryTranslators.GreaterThanOrEqualBinaryTranslator);
-            return true;
-        }
-        return false;
-    };
-
-    public static TranslateBinaryHash[] SupportedHashes => new[]
-    {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.GreaterThanOrEqualBinaryTranslator)
+        Expression.GreaterThanOrEqual(Expression.Constant(1), Expression.Constant(2))
     };
 }

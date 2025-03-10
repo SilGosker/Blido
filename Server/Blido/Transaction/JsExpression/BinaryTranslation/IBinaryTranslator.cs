@@ -1,8 +1,9 @@
-﻿namespace Blido.Core.Transaction.JsExpression.BinaryTranslation;
+﻿using System.Linq.Expressions;
+
+namespace Blido.Core.Transaction.JsExpression.BinaryTranslation;
 
 public interface IBinaryTranslator
 {
     public static abstract TranslateBinary TranslateBinary { get; }
-    public static abstract TryMatchBinary TryMatchBinary { get; }
-    public static abstract TranslateBinaryHash[] SupportedHashes { get; }
+    public static abstract BinaryExpression[] SupportedBinaries { get; }
 }

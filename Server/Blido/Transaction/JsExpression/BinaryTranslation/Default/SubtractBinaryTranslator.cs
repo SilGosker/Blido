@@ -13,19 +13,8 @@ public class SubtractBinaryTranslator : IBinaryTranslator
         builder.Append(')');
     };
 
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression binaryExpression, out TranslateBinaryHash hash) =>
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        hash = default;
-        if (binaryExpression.NodeType == ExpressionType.Subtract)
-        {
-            hash = new TranslateBinaryHash((int)CoreBinaryTranslators.SubtractBinaryTranslator);
-            return true;
-        }
-        return false;
-    };
-
-    public static TranslateBinaryHash[] SupportedHashes => new[]
-    {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.SubtractBinaryTranslator)
+        Expression.Subtract(Expression.Constant(1), Expression.Constant(2))
     };
 }

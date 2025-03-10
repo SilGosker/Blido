@@ -1,20 +1,17 @@
 ﻿using System.Linq.Expressions;
-using Blido.Core.Transaction.JsExpression.BinaryTranslation;
+using Blido.Core.Helpers;
 
-namespace Blido.Core.UnitTests.Mock.Transaction.JsExpression.BinaryTranslation;
+namespace Blido.Core.Transaction.JsExpression.BinaryTranslation;
 
 public class MockSupportedBinaryTranslator : IBinaryTranslator
 {
     public static TranslateBinary TranslateBinary => (builder, expression, processExpression) => throw new NotImplementedException();
-    
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression binary, out TranslateBinaryHash hash) =>
-    {
-        hash = default;
-        return false;
-    };
 
-    public static TranslateBinaryHash[] SupportedHashes => new[]
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.AddBinaryTranslator)
+        Expression.GreaterThanOrEqual(
+            Expression.Convert(
+                Expression.Constant(0L, typeof(long?)), typeof(long)),
+            Expression.Constant(0L, typeof(long)))
     };
 }

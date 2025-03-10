@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection.PortableExecutable;
-using Blido.Core.UnitTests.Mock.Transaction.JsExpression.BinaryTranslation;
 
 namespace Blido.Core.Transaction.JsExpression.BinaryTranslation;
 
@@ -12,10 +11,10 @@ public class JsBinaryTranslatorFactoryTests
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
         int supportedBinaryCount = factory.Count;
-        var binary = MockUnsupportedBinaryTranslator.SupportedHashes[0];
+        var binary = MockUnsupportedBinaryTranslator.SupportedBinaries[0];
 
         // Act
-        factory.AddCustomBinaryTranslator(MockUnsupportedBinaryTranslator.TryMatchBinary, binary, MockUnsupportedBinaryTranslator.TranslateBinary);
+        factory.AddCustomBinaryTranslator(binary, MockUnsupportedBinaryTranslator.TranslateBinary);
 
         // Assert
         Assert.Equal(supportedBinaryCount + 1, factory.Count);
@@ -28,7 +27,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binary = MockUnsupportedBinaryTranslator.SupportedHashes[0];
+        var binary = MockUnsupportedBinaryTranslator.SupportedBinaries[0];
         int supportedBinaryCount = factory.Count;
         // Act
         factory.AddCustomBinaryTranslator<MockUnsupportedBinaryTranslator>();
@@ -36,7 +35,7 @@ public class JsBinaryTranslatorFactoryTests
         // Assert
         Assert.True(factory.TryGetValue(binary, out var translateBinary));
         Assert.Equal(MockUnsupportedBinaryTranslator.TranslateBinary, translateBinary);
-        Assert.Equal(supportedBinaryCount + MockUnsupportedBinaryTranslator.SupportedHashes.Length, factory.Count);
+        Assert.Equal(supportedBinaryCount + MockUnsupportedBinaryTranslator.SupportedBinaries.Length, factory.Count);
     }
 
     [Fact]
@@ -44,11 +43,11 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockSupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockSupportedBinaryTranslator.SupportedBinaries[0];
         int supportedBinaryCount = factory.Count;
 
         // Act
-        factory.AddCustomBinaryTranslator(MockSupportedBinaryTranslator.TryMatchBinary, binaryHash, MockSupportedBinaryTranslator.TranslateBinary);
+        factory.AddCustomBinaryTranslator(binaryHash, MockSupportedBinaryTranslator.TranslateBinary);
         
         // Assert
         Assert.True(factory.TryGetValue(binaryHash, out var translateBinary));
@@ -61,7 +60,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockSupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockSupportedBinaryTranslator.SupportedBinaries[0];
         int supportedBinaryCount = factory.Count;
 
         // Act
@@ -78,7 +77,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockSupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockSupportedBinaryTranslator.SupportedBinaries[0];
         factory.AddCustomBinaryTranslator<MockSupportedBinaryTranslator>();
         
         // Act
@@ -93,7 +92,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockUnsupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockUnsupportedBinaryTranslator.SupportedBinaries[0];
 
         // Act
         var result = factory.ContainsKey(binaryHash);
@@ -107,7 +106,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockSupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockSupportedBinaryTranslator.SupportedBinaries[0];
         factory.AddCustomBinaryTranslator<MockSupportedBinaryTranslator>();
 
         // Act
@@ -123,7 +122,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockUnsupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockUnsupportedBinaryTranslator.SupportedBinaries[0];
         // Act
         var result = factory.TryGetValue(binaryHash, out var translateBinary);
         // Assert
@@ -136,7 +135,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockSupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockSupportedBinaryTranslator.SupportedBinaries[0];
         factory.AddCustomBinaryTranslator<MockSupportedBinaryTranslator>();
         // Act
         var translateBinary = factory[binaryHash];
@@ -149,7 +148,7 @@ public class JsBinaryTranslatorFactoryTests
     {
         // Arrange
         var factory = new JsBinaryTranslatorFactory();
-        var binaryHash = MockUnsupportedBinaryTranslator.SupportedHashes[0];
+        var binaryHash = MockUnsupportedBinaryTranslator.SupportedBinaries[0];
         // Act
         Action act = () => _ = factory[binaryHash];
         // Assert

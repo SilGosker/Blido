@@ -8,59 +8,14 @@ public class AndAlsoBinaryTranslatorTests
     public void SupportedHashes_DoesNotContainDefault()
     {
         // Arrange
-        var operators = AndAlsoBinaryTranslator.SupportedHashes;
+        var operators = AndAlsoBinaryTranslator.SupportedBinaries;
 
         
         // Act
-        var containsDefault = operators.Contains(default);
+        var containsDefault = operators.Contains(null);
         
         // Assert
         Assert.False(containsDefault);
-    }
-
-    [Fact]
-    public void SupportedHashes_IsPartOfCoreBinaryTranslators()
-    {
-        // Arrange
-        var operators = AndAlsoBinaryTranslator.SupportedHashes;
-        
-        // Act
-        var areAllPartOfCoreBinaryTranslator = operators.All(x => Enum.IsDefined((CoreBinaryTranslators)x.Hash));
-        
-        // Assert
-        Assert.True(areAllPartOfCoreBinaryTranslator);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.AndAlso)]
-    public void TryMatchBinary_ReturnsTrueForAndAlso(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(true), Expression.Constant(true));
-        
-        // Act
-        var isMatch = AndAlsoBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.True(isMatch);
-        Assert.Equal((int)CoreBinaryTranslators.AndAlsoBinaryTranslator, hash.Hash);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.OrElse)]
-    [InlineData(ExpressionType.And)]
-    [InlineData(ExpressionType.Or)]
-    public void TryMatchBinary_ReturnsFalseForNonAndAlso(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(true), Expression.Constant(false));
-
-        // Act
-        var isMatch = AndAlsoBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-
-        // Assert
-        Assert.False(isMatch);
-        Assert.Equal(default, hash);
     }
 
     [Fact]

@@ -9,68 +9,13 @@ public class GreaterThanOrEqualBinaryTranslatorTests
     public void SupportedHashes_DoesNotContainDefault()
     {
         // Arrange
-        var operators = GreaterThanOrEqualBinaryTranslator.SupportedHashes;
+        var operators = GreaterThanOrEqualBinaryTranslator.SupportedBinaries;
         
         // Act
-        var containsDefault = operators.Contains(default);
+        var containsDefault = operators.Contains(null);
         
         // Assert
         Assert.False(containsDefault);
-    }
-
-    [Fact]
-    public void SupportedHashes_IsPartOfCoreBinaryTranslators()
-    {
-        // Arrange
-        var operators = GreaterThanOrEqualBinaryTranslator.SupportedHashes;
-        
-        // Act
-        var areAllPartOfCoreBinaryTranslator = operators.All(x => Enum.IsDefined((CoreBinaryTranslators)x.Hash));
-        
-        // Assert
-        Assert.True(areAllPartOfCoreBinaryTranslator);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.GreaterThanOrEqual)]
-    public void TryMatchBinary_ReturnsTrueForGreaterThanOrEqual(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = GreaterThanOrEqualBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.True(isMatch);
-        Assert.Equal((int)CoreBinaryTranslators.GreaterThanOrEqualBinaryTranslator, hash.Hash);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.Or)]
-    [InlineData(ExpressionType.Add)]
-    [InlineData(ExpressionType.AddChecked)]
-    [InlineData(ExpressionType.Multiply)]
-    [InlineData(ExpressionType.MultiplyChecked)]
-    [InlineData(ExpressionType.Subtract)]
-    [InlineData(ExpressionType.SubtractChecked)]
-    [InlineData(ExpressionType.Divide)]
-    [InlineData(ExpressionType.Modulo)]
-    [InlineData(ExpressionType.Equal)]
-    [InlineData(ExpressionType.GreaterThan)]
-    [InlineData(ExpressionType.LessThan)]
-    [InlineData(ExpressionType.LessThanOrEqual)]
-    public void TryMatchBinary_ReturnsFalseForNonGreaterThanOrEqual(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = GreaterThanOrEqualBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.False(isMatch);
-        Assert.Equal(default, hash);
     }
 
     [Fact]

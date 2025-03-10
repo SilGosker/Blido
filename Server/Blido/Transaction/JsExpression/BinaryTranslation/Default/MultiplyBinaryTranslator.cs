@@ -13,19 +13,8 @@ public class MultiplyBinaryTranslator : IBinaryTranslator
         builder.Append(')');
     };
 
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression binaryExpression, out TranslateBinaryHash hash) =>
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        hash = default;
-        if (binaryExpression.NodeType is ExpressionType.Multiply or ExpressionType.MultiplyChecked)
-        {
-            hash = new TranslateBinaryHash((int)CoreBinaryTranslators.MultiplyBinaryTranslator);
-            return true;
-        }
-        return false;
-    };
-
-    public static TranslateBinaryHash[] SupportedHashes => new[]
-    {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.MultiplyBinaryTranslator)
+        Expression.Multiply(Expression.Constant(1), Expression.Constant(2))
     };
 }

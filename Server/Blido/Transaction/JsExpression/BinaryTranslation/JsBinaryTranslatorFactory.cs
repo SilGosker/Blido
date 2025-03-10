@@ -3,94 +3,89 @@ using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using Blido.Core.Helpers;
-using Blido.Core.Transaction.JsExpression.MemberTranslation;
+using Blido.Core.Transaction.JsExpression.BinaryTranslation.Default;
 
 namespace Blido.Core.Transaction.JsExpression.BinaryTranslation;
 
 public class JsBinaryTranslatorFactory : IBinaryTranslatorFactory
 {
-    private IReadOnlyDictionary<TranslateBinaryHash, TranslateBinary> _translators;
-    private readonly List<TryMatchBinary> _matchers = new();
+    private IReadOnlyDictionary<BinaryExpression, TranslateBinary> _translators;
+    private IReadOnlyDictionary<ExpressionType, TranslateBinary> _defaultTranslators;
 
     public JsBinaryTranslatorFactory()
     {
-        var translators = new Dictionary<TranslateBinaryHash, TranslateBinary>();
-        var blazorIndexedOrmTypes = Assembly.GetExecutingAssembly().GetTypes();
+        var translators = new Dictionary<BinaryExpression, TranslateBinary>(new BinaryExpressionComparer());
+        var defaultTranslators = new Dictionary<ExpressionType, TranslateBinary>();
 
-        foreach (Type type in blazorIndexedOrmTypes.Where(x => x.IsClass && x.GetInterface(nameof(IBinaryTranslator)) != null))
+        var blazorIndexedOrmTypes = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(x => x.IsClass && !x.IsAbstract && x.GetInterface(nameof(IBinaryTranslator)) != null);
+        
+        string defaultNamespace = typeof(EqualBinaryTranslator).Namespace!;
+
+        foreach (Type type in blazorIndexedOrmTypes.Where(x => x.Namespace != defaultNamespace))
         {
-            if (type.GetProperty(nameof(IBinaryTranslator.SupportedHashes))!.GetValue(null)
-                is not TranslateBinaryHash[] supportedMembers) continue;
+            if (type.GetProperty(nameof(IBinaryTranslator.SupportedBinaries))!.GetValue(null)
+                is not BinaryExpression[] supportedBinaries) continue;
+
+            if (type.GetProperty(nameof(IBinaryTranslator.TranslateBinary))!.GetValue(null)
+                is not TranslateBinary translateMember) continue;
+            
+            foreach (var binaryExpression in supportedBinaries)
+            {
+                translators.Add(binaryExpression, translateMember);
+            }
+        }
+
+        foreach (Type type in blazorIndexedOrmTypes.Where(x => x.Namespace == defaultNamespace))
+        {
+            if (type.GetProperty(nameof(IBinaryTranslator.SupportedBinaries))!.GetValue(null)
+                is not BinaryExpression[] supportedBinaries) continue;
 
             if (type.GetProperty(nameof(IBinaryTranslator.TranslateBinary))!.GetValue(null)
                 is not TranslateBinary translateMember) continue;
 
-            if (type.GetProperty(nameof(IBinaryTranslator.TryMatchBinary))!.GetValue(null)
-                is not TryMatchBinary tryMatchBinary) continue;
-            
-            _matchers.Add(tryMatchBinary);
-
-            foreach (var binaryHash in supportedMembers)
+            foreach (var binaryExpression in supportedBinaries)
             {
-                translators.Add(binaryHash, translateMember);
+                defaultTranslators.Add(binaryExpression.NodeType, translateMember);
             }
         }
 
         _translators = translators;
+        _defaultTranslators = defaultTranslators;
     }
-    public void AddCustomBinaryTranslator(TryMatchBinary tryMatchBinary, TranslateBinaryHash matchingHash, TranslateBinary translator)
+
+    public void AddCustomBinaryTranslator(BinaryExpression tryMatchBinary, TranslateBinary translator)
     {
         ThrowHelper.ThrowDictionaryIsNotReadonlyException(_translators, out var translators);
-        _matchers.Add(tryMatchBinary);
-        translators[matchingHash] = translator;
+        translators[tryMatchBinary] = translator;
     }
 
     public void AddCustomBinaryTranslator<TTranslator>() where TTranslator : IBinaryTranslator
     {
-        foreach (var hash in TTranslator.SupportedHashes)
+        foreach (var binaryExpression in TTranslator.SupportedBinaries)
         {
-            AddCustomBinaryTranslator(TTranslator.TryMatchBinary, hash, TTranslator.TranslateBinary);
+            AddCustomBinaryTranslator(binaryExpression, TTranslator.TranslateBinary);
         }
     }
 
     public void Confirm()
     {
         _translators = _translators.ToFrozenDictionary();
-        _matchers.Reverse();
+        _defaultTranslators = _defaultTranslators.ToFrozenDictionary();
     }
 
     public bool TryGetValue(BinaryExpression key, [MaybeNullWhen(false)] out TranslateBinary value)
     {
-        TranslateBinaryHash? hash = null;
-        value = null;
-
-        var span = CollectionsMarshal.AsSpan(_matchers);
-        foreach (var matcher in span)
+        if (_translators.TryGetValue(key, out value))
         {
-            if (matcher(key, out var matcherHash))
-            {
-                hash = matcherHash;
-                break;
-            }
+            return true;
         }
 
-        if (hash is null)
-        {
-            return false;
-        }
-
-        if (!_translators.TryGetValue(hash.Value, out var translators))
-        {
-            return false;
-        }
-
-        value = translators;
-        return true;
+        return _defaultTranslators.TryGetValue(key.NodeType, out value);
     }
 
-    public IEnumerator<KeyValuePair<TranslateBinaryHash, TranslateBinary>> GetEnumerator()
+    public IEnumerator<KeyValuePair<BinaryExpression, TranslateBinary>> GetEnumerator()
     {
         return _translators.GetEnumerator();
     }
@@ -100,19 +95,14 @@ public class JsBinaryTranslatorFactory : IBinaryTranslatorFactory
         return GetEnumerator();
     }
 
-    public int Count => _translators.Count;
-    public bool ContainsKey(TranslateBinaryHash key)
+    public int Count => _translators.Count + _defaultTranslators.Count;
+    public bool ContainsKey(BinaryExpression key)
     {
-        return _translators.ContainsKey(key);
+        return _translators.ContainsKey(key) || _defaultTranslators.ContainsKey(key.NodeType);
     }
 
-    public bool TryGetValue(TranslateBinaryHash key, [MaybeNullWhen(false)] out TranslateBinary value)
-    {
-        return _translators.TryGetValue(key, out value);
-    }
+    public TranslateBinary this[BinaryExpression key] => _translators[key];
 
-    public TranslateBinary this[TranslateBinaryHash key] => _translators[key];
-
-    public IEnumerable<TranslateBinaryHash> Keys => _translators.Keys;
+    public IEnumerable<BinaryExpression> Keys => _translators.Keys;
     public IEnumerable<TranslateBinary> Values => _translators.Values;
 }

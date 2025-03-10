@@ -13,19 +13,8 @@ public class ModuloBinaryTranslator : IBinaryTranslator
         builder.Append(')');
     };
 
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression binaryExpression, out TranslateBinaryHash hash) =>
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        hash = default;
-        if (binaryExpression.NodeType == ExpressionType.Modulo)
-        {
-            hash = new TranslateBinaryHash((int)CoreBinaryTranslators.ModuloBinaryTranslator);
-            return true;
-        }
-        return false;
-    };
-
-    public static TranslateBinaryHash[] SupportedHashes => new[]
-    {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.ModuloBinaryTranslator)
+        Expression.Modulo(Expression.Constant(1), Expression.Constant(2))
     };
 }

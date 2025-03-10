@@ -13,20 +13,8 @@ public class LessThanBinaryTranslator : IBinaryTranslator
         builder.Append(')');
     };
 
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression expression, out TranslateBinaryHash hash) =>
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        hash = default;
-        if (expression.NodeType == ExpressionType.LessThan)
-        {
-            hash = new TranslateBinaryHash((int)CoreBinaryTranslators.LessThanBinaryTranslator);
-            return true;
-        }
-
-        return false;
-    };
-
-    public static TranslateBinaryHash[] SupportedHashes => new[]
-    {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.LessThanBinaryTranslator)
+        Expression.LessThan(Expression.Constant(1), Expression.Constant(2))
     };
 }

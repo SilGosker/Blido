@@ -1,5 +1,5 @@
-﻿using Blido.Core.UnitTests.Mock.Transaction.JsExpression.MemberCallTranslation;
-using System.Reflection;
+﻿using System.Reflection;
+using Blido.Core.Transaction.JsExpression.MemberCallTranslation;
 
 namespace Blido.Core.Transaction.JsExpression.MemberTranslation;
 

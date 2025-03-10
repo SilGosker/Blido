@@ -1,7 +1,4 @@
-﻿using Blido.Core.UnitTests.Mock.Transaction.JsExpression.BinaryTranslation;
-using Blido.Core.UnitTests.Mock.Transaction.JsExpression.UnaryTranslation;
-
-namespace Blido.Core.Transaction.JsExpression.UnaryTranslation;
+﻿namespace Blido.Core.Transaction.JsExpression.UnaryTranslation;
 
 public class JsUnaryTranslatorFactoryTests
 {

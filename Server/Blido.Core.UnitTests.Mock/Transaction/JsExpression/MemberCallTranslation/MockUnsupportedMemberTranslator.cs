@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-using System.Reflection.PortableExecutable;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
 
-namespace Blido.Core.UnitTests.Mock.Transaction.JsExpression.MemberCallTranslation;
+namespace Blido.Core.Transaction.JsExpression.MemberCallTranslation;
 
 public class MockUnsupportedMemberTranslator : IMemberTranslator
 {

@@ -13,19 +13,8 @@ public class OrElseBinaryTranslator : IBinaryTranslator
         builder.Append(')');
     };
 
-    public static TryMatchBinary TryMatchBinary => (BinaryExpression binaryExpression, out TranslateBinaryHash hash) =>
+    public static BinaryExpression[] SupportedBinaries => new[]
     {
-        hash = default;
-        if (binaryExpression.NodeType == ExpressionType.OrElse)
-        {
-            hash = new TranslateBinaryHash((int)CoreBinaryTranslators.OrElseBinaryTranslator);
-            return true;
-        }
-        return false;
-    };
-
-    public static TranslateBinaryHash[] SupportedHashes => new[]
-    {
-        new TranslateBinaryHash((int)CoreBinaryTranslators.OrElseBinaryTranslator)
+        Expression.OrElse(Expression.Constant(true), Expression.Constant(false))
     };
 }

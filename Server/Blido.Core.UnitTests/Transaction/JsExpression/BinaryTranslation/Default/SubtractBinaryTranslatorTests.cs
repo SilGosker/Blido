@@ -10,65 +10,13 @@ public class SubtractBinaryTranslatorTests
     public void SupportedHashes_DoesNotContainDefault()
     {
         // Arrange
-        var operators = SubtractBinaryTranslator.SupportedHashes;
+        var operators = SubtractBinaryTranslator.SupportedBinaries;
         
         // Act
-        var containsDefault = operators.Contains(default);
+        var containsDefault = operators.Contains(null);
         
         // Assert
         Assert.False(containsDefault);
-    }
-
-    [Fact]
-    public void SupportedHashes_IsPartOfCoreBinaryTranslators()
-    {
-        // Arrange
-        var operators = SubtractBinaryTranslator.SupportedHashes;
-        
-        // Act
-        var areAllPartOfCoreBinaryTranslator = operators.All(x => Enum.IsDefined((CoreBinaryTranslators)x.Hash));
-        
-        // Assert
-        Assert.True(areAllPartOfCoreBinaryTranslator);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.Subtract)]
-    public void TryMatchBinary_ReturnsTrueForSubtract(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = SubtractBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.True(isMatch);
-        Assert.Equal((int)CoreBinaryTranslators.SubtractBinaryTranslator, hash.Hash);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.Add)]
-    [InlineData(ExpressionType.And)]
-    [InlineData(ExpressionType.AddChecked)]
-    [InlineData(ExpressionType.Multiply)]
-    [InlineData(ExpressionType.MultiplyChecked)]
-    [InlineData(ExpressionType.Or)]
-    [InlineData(ExpressionType.Divide)]
-    [InlineData(ExpressionType.Modulo)]
-    [InlineData(ExpressionType.Equal)]
-    [InlineData(ExpressionType.GreaterThan)]
-    public void TryMatchBinary_ReturnsFalseForNonSubtract(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = SubtractBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.False(isMatch);
-        Assert.Equal(default, hash);
     }
 
     [Fact]

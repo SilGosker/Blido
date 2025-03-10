@@ -9,81 +9,13 @@ public class ModuloBinaryTranslatorTests
     public void SupportedHashes_DoesNotContainDefault()
     {
         // Arrange
-        var operators = ModuloBinaryTranslator.SupportedHashes;
+        var operators = ModuloBinaryTranslator.SupportedBinaries;
         
         // Act
-        var containsDefault = operators.Contains(default);
+        var containsDefault = operators.Contains(null);
         
         // Assert
         Assert.False(containsDefault);
-    }
-
-    [Fact]
-    public void SupportedHashes_IsPartOfCoreBinaryTranslators()
-    {
-        // Arrange
-        var operators = ModuloBinaryTranslator.SupportedHashes;
-        
-        // Act
-        var areAllPartOfCoreBinaryTranslator = operators.All(x => Enum.IsDefined((CoreBinaryTranslators)x.Hash));
-        
-        // Assert
-        Assert.True(areAllPartOfCoreBinaryTranslator);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.Modulo)]
-    public void TryMatchBinary_ReturnsTrueForModulo(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = ModuloBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.True(isMatch);
-        Assert.Equal((int)CoreBinaryTranslators.ModuloBinaryTranslator, hash.Hash);
-    }
-
-    [Theory]
-    [InlineData(ExpressionType.Modulo)]
-    public void TryMatchBinary_ReturnsTrueForModuloWithDifferentOperands(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = ModuloBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.True(isMatch);
-        Assert.Equal((int)CoreBinaryTranslators.ModuloBinaryTranslator, hash.Hash);
-    }
-
-
-    [Theory]
-    [InlineData(ExpressionType.Or)]
-    [InlineData(ExpressionType.Add)]
-    [InlineData(ExpressionType.AddChecked)]
-    [InlineData(ExpressionType.Multiply)]
-    [InlineData(ExpressionType.MultiplyChecked)]
-    [InlineData(ExpressionType.Subtract)]
-    [InlineData(ExpressionType.SubtractChecked)]
-    [InlineData(ExpressionType.Divide)]
-    [InlineData(ExpressionType.Equal)]
-    [InlineData(ExpressionType.GreaterThan)]
-    [InlineData(ExpressionType.LessThan)]
-    public void TryMatchBinary_ReturnsFalseForNonModulo(ExpressionType expressionType)
-    {
-        // Arrange
-        var binaryExpression = Expression.MakeBinary(expressionType, Expression.Constant(1), Expression.Constant(2));
-        
-        // Act
-        var isMatch = ModuloBinaryTranslator.TryMatchBinary(binaryExpression, out var hash);
-        
-        // Assert
-        Assert.False(isMatch);
     }
 
 

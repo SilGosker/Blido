@@ -16,8 +16,7 @@ public class GreaterThanOrEqualNullableNumberLeftBinaryTranslator : IBinaryTrans
     };
 
     public static BinaryExpression[] SupportedBinaries => NumberHelper.NumberTypes.Select(type => Expression.GreaterThanOrEqual(
-        Expression.Convert(
-            Expression.Parameter(typeof(Nullable<>).MakeGenericType(type)), type),
-        Expression.Parameter(type)
+        Expression.Parameter(typeof(Nullable<>).MakeGenericType(type)),
+        Expression.Convert(Expression.Parameter(type), typeof(Nullable<>).MakeGenericType(type))
     )).ToArray();
 }

@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Blido.Core.Helpers;
 
 namespace Blido.Core.Transaction.JsExpression.BinaryTranslation;
 
@@ -11,7 +10,7 @@ public class MockSupportedBinaryTranslator : IBinaryTranslator
     {
         Expression.GreaterThanOrEqual(
             Expression.Convert(
-                Expression.Constant(0L, typeof(long?)), typeof(long)),
-            Expression.Constant(0L, typeof(long)))
+                Expression.Constant(0L, typeof(long)), typeof(long?)),
+            Expression.Constant(0L, typeof(long?)))
     };
 }

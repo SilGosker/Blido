@@ -16,7 +16,7 @@ public class LessThanOrEqualNullableRightBinaryTranslator : IBinaryTranslator
 
     public static BinaryExpression[] SupportedBinaries => NumberHelper.NumberTypes.Select(type =>
         Expression.LessThanOrEqual(
-            Expression.Parameter(type),
-            Expression.Convert(Expression.Parameter(typeof(Nullable<>).MakeGenericType(type)), type)
+            Expression.Convert(Expression.Parameter(type), typeof(Nullable<>).MakeGenericType(type)),
+            Expression.Parameter(typeof(Nullable<>).MakeGenericType(type))
         )).ToArray();
 }

@@ -14,14 +14,9 @@ public class GreaterThanOrEqualNullableNumberRightBinaryTranslator : IBinaryTran
         builder.Append("??window)");
     };
 
-    private static readonly Type[] NumberTypes = new[]
-    {
-        typeof(int), typeof(long), typeof(short), typeof(byte), typeof(float), typeof(double), typeof(decimal),
-        typeof(uint), typeof(ulong), typeof(ushort), typeof(sbyte)
-    };
-
-    public static BinaryExpression[] SupportedBinaries => 
+    public static BinaryExpression[] SupportedBinaries =>
         NumberHelper.NumberTypes.Select(type => Expression.GreaterThanOrEqual(
-            Expression.Parameter(type),
-            Expression.Convert(Expression.Parameter(typeof(Nullable<>).MakeGenericType(type)), type))).ToArray();
+            Expression.Convert(Expression.Parameter(type), typeof(Nullable<>).MakeGenericType(type)),
+            Expression.Parameter(typeof(Nullable<>).MakeGenericType(type))
+        )).ToArray();
 }

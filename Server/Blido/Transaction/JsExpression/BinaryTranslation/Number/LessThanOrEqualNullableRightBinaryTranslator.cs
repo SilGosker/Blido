@@ -11,7 +11,7 @@ public class LessThanOrEqualNullableRightBinaryTranslator : IBinaryTranslator
         processNext(expression.Left);
         builder.Append(")<=(");
         processNext(expression.Right);
-        builder.Append("??window)");
+        builder.Append("??{})");
     };
 
     public static BinaryExpression[] SupportedBinaries => NumberHelper.NumberTypes.Select(type =>

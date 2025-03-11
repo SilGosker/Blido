@@ -10,7 +10,7 @@ public class GreaterThanOrEqualNullableNumberLeftBinaryTranslator : IBinaryTrans
     {
         builder.Append('(');
         processNext(expression.Left);
-        builder.Append("??window)>=(");
+        builder.Append("??{})>=(");
         processNext(expression.Right);
         builder.Append(')');
     };

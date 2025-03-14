@@ -3,8 +3,9 @@ export function processArguments(json: string): Arguments {
         { parsedSelector: string, database: string, objectStore: string, version: number, parsedExpressions: string[] | undefined, identifiers: object };
 
     let matches = (_: unknown) => true;
-    if (parsed.parsedExpressions && parsed.parsedExpressions.length) {
-        const functions = parsed.parsedExpressions.map(x => eval(x));
+    const hasFilters = !!(parsed.parsedExpressions && parsed.parsedExpressions.length);
+    if (hasFilters) {
+        const functions = (parsed.parsedExpressions as string[]).map(x => eval(x));
         matches = (entity: unknown) => functions.every(x => x(entity));
     }
 
@@ -19,6 +20,7 @@ export function processArguments(json: string): Arguments {
         matches,
         objectStoreName: parsed.objectStore,
         selector,
+        hasFilters,
         id: parsed.identifiers
     }
 }
@@ -28,6 +30,7 @@ export interface Arguments {
     objectStoreName: string,
     currentVersion: number,
     matches: (entity: unknown) => boolean;
+    hasFilters: boolean
     selector: (entity: unknown) => number | unknown;
     id: string | number | object | null;
 }

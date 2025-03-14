@@ -1,9 +1,21 @@
 import {processArguments} from "../ProcessArguments";
-import {startCursor} from "../StartCursor";
+import {startCursor, startTransaction} from "../StartCursor";
 
 export function toArray(json: string) : Promise<unknown[]> {
     return new Promise(async (resolve, reject) => {
         const args = processArguments(json);
+
+        if (args.hasFilters) {
+            const transaction = await startTransaction(args.databaseName, args.currentVersion, args.objectStoreName);
+            const request = transaction.getAll();
+
+            request.onsuccess = () => {
+                resolve(request.result);
+            };
+
+            request.onerror = _ => reject();
+            return;
+        }
 
         const result: unknown[] = [];
         const request = await startCursor(args.databaseName, args.currentVersion, args.objectStoreName);

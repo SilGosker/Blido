@@ -27,4 +27,9 @@ public class TransactionConditions<TEntity> where TEntity : class
 
         return _conditions.All(condition => condition.Compile().Invoke(entity));
     }
+
+    public void Clear()
+    {
+        _conditions?.Clear();
+    }
 }

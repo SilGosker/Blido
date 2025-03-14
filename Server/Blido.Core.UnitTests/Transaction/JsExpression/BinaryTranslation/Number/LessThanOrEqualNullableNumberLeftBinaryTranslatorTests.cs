@@ -30,8 +30,10 @@ public class LessThanOrEqualNullableNumberLeftBinaryTranslatorTests
         {
             builder.Append('x');
         };
+
         // Act
         LessThanOrEqualNullableNumberLeftBinaryTranslator.TranslateBinary(builder, expression, processExpression);
+        
         // Assert
         Assert.Equal("(x??{})<=(x)", builder.ToString());
     }

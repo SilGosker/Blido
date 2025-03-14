@@ -35,8 +35,10 @@ public class ToLowerMethodCallTranslatorTests
                 stringBuilder.Append('\"');
             }
         };
+
         // Act
         ToLowerMethodCallTranslator.TranslateMethodCall(stringBuilder, expression, processExpression);
+        
         // Assert
         Assert.Equal("\"base\".toLowerCase()", stringBuilder.ToString());
     }

@@ -10,12 +10,11 @@ public class JsUnaryExpressionBuilder
     public static void AppendUnary(StringBuilder sb, IUnaryTranslatorFactory factory, UnaryExpression expression,
         ProcessExpression processExpression)
     {
-#nullable disable
-        if (!factory.TryGetValue(expression, out TranslateUnary translator))
+        if (!factory.TryGetValue(expression, out TranslateUnary? translator))
         {
             ThrowHelper.ThrowUnsupportedException(expression);
         }
-#nullable restore
+
         translator!(sb, expression, processExpression);
     }
 }

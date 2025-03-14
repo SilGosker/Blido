@@ -9,13 +9,11 @@ public class JsMemberExpressionBuilder
     public static void AppendMember(StringBuilder sb, IMemberTranslatorFactory memberTranslatorFactory,
         MemberExpression expression, ProcessExpression processExpression)
     {
-#nullable disable
-        if (memberTranslatorFactory.TryGetValue(expression.Member, out TranslateMember translateMember))
+        if (memberTranslatorFactory.TryGetValue(expression.Member, out TranslateMember? translateMember))
         {
             translateMember(sb, expression, processExpression);
             return;
         }
-#nullable restore
 
         string name = NameResolver.ResolveObjectFieldName(expression.Member);
 

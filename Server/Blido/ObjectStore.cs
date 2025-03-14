@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Numerics;
 using Blido.Core.Transaction;
 using Blido.Core.Transaction.Configuration;
@@ -107,7 +107,8 @@ public class ObjectStore<TEntity> :
 
     public Task<TEntity?> FindAsync(object identifiers, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(identifiers);
+        return _provider.ExecuteAsync<TEntity?>(nameof(FindAsync), identifiers, cancellationToken);
     }
 
     public Task<int> CountAsync(CancellationToken cancellationToken = default)

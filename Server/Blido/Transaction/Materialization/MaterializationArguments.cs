@@ -18,4 +18,7 @@ public class MaterializationArguments
 
     [JsonPropertyName("parsedSelector")]
     public string? Selector { get; set; }
+
+    [JsonPropertyName("identifiers")]
+    public object? Identifiers { get; set; }
 }

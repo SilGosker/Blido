@@ -13,7 +13,6 @@ public class QueryProviderTests
         IJSRuntime jsRuntime = null!;
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(new Mock<IJSRuntime>().Object);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), new Mock<IJSRuntime>().Object);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         
         // Act
@@ -31,7 +30,6 @@ public class QueryProviderTests
         var jsRuntime = new Mock<IJSRuntime>().Object;
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
         IExpressionBuilder jsExpressionBuilder = null!;
 
         // Act
@@ -49,12 +47,11 @@ public class QueryProviderTests
         var jsRuntime = new Mock<IJSRuntime>().Object;
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
 
         // Act
-        Action act = () => transactionProvider.Where(null!);
+        Action act = () => queryProvider.Where(null!);
         
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -68,29 +65,15 @@ public class QueryProviderTests
         var jsRuntime = new Mock<IJSRuntime>().Object;
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
         // Act
-        Func<Task> act = async () => await transactionProvider.ExecuteAsync<object>(null!, CancellationToken.None);
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>(null!, CancellationToken.None);
+        
         // Assert
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
         Assert.Equal("methodName", exception.ParamName);
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_WithNullSelector_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var jsRuntime = new Mock<IJSRuntime>().Object;
-        var objectStoreFactory = new Mock<IObjectStoreFactory>();
-        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
-        // Act
-        Func<Task> act = async () => await transactionProvider.ExecuteAsync<object>("methodName", null!, CancellationToken.None);
-        // Assert
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
-        Assert.Equal("selector", exception.ParamName);
     }
 
     [Fact]
@@ -100,10 +83,12 @@ public class QueryProviderTests
         var jsRuntime = new Mock<IJSRuntime>().Object;
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
         // Act
-        Func<Task> act = async () => await transactionProvider.ExecuteAsync<object>("unsupportedMethodName", CancellationToken.None);
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>("unsupportedMethodName", CancellationToken.None);
+
         // Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(act);
         Assert.Equal("Method name 'unsupportedMethodName' is not supported.", exception.Message);
@@ -114,16 +99,225 @@ public class QueryProviderTests
     {
         // Arrange
         var jsRuntime = new Mock<IJSRuntime>();
+        jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
         jsRuntime.Setup(x => x.InvokeAsync<bool>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(true);
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
-        ((IQueryProvider)transactionProvider).SetObjectStore(new ObjectStore<object>(database, transactionProvider));
+        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+
         // Act
-        var result = await transactionProvider.ExecuteAsync<bool>("AnyAsync");
-        
+        var result = await queryProvider.ExecuteAsync<bool>("AnyAsync");
+
         // Assert
         Assert.True(result);
     }
+
+    [Fact]
+    public async Task ExecuteAsync_SelectorOverload_WithNullMethodName_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>(null!, new Func<object, object>(x => x), CancellationToken.None);
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
+        Assert.Equal("methodName", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SelectorOverload_WithUnsupportedMethodName_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>("unsupportedMethodName", new Func<object, object>(x => x), CancellationToken.None);
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+        Assert.Equal("Method name 'unsupportedMethodName' is not supported.", exception.Message);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SelectorOverload_WithNullSelector_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>("methodName", null!, CancellationToken.None);
+        
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
+        Assert.Equal("selector", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SelectorOverload_WithValidArguments_ShouldNotThrow()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>();
+        jsRuntime.Setup(x => x.InvokeAsync<object>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(new object());
+        jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
+        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+
+        // Act
+        var result = await queryProvider.ExecuteAsync<object>("SumAsync", selector: _ => 1, CancellationToken.None);
+        
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_IdentifiersOverload_WithNullMethodName_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>(null!, new { }, CancellationToken.None);
+        
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
+        Assert.Equal("methodName", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_IdentifiersOverload_WithUnsupportedMethodName_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>("unsupportedMethodName", new { }, CancellationToken.None);
+        
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+        Assert.Equal("Method name 'unsupportedMethodName' is not supported.", exception.Message);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_IdentifiersOverload_WithNullIdentifiers_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync<object>("methodName", identifiers: null!, CancellationToken.None);
+        
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
+        Assert.Equal("identifiers", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_IdentifiersOverload_WithValidArguments_ShouldNotThrow()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>();
+        jsRuntime.Setup(x => x.InvokeAsync<object>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(new object());
+        jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
+        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+        
+        // Act
+        var result = await queryProvider.ExecuteAsync<object>("FindAsync", new object(), CancellationToken.None);
+        
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_NonGenericArgumentOverload_WithNullMethodName_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync(null!, CancellationToken.None);
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(act);
+        Assert.Equal("methodName", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_NonGenericArgumentOverload_WithUnsupportedMethodName_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
+
+        // Act
+        Func<Task> act = async () => await queryProvider.ExecuteAsync("unsupportedMethodName", CancellationToken.None);
+        
+        // Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+        Assert.Equal("Method name 'unsupportedMethodName' is not supported.", exception.Message);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_NonGenericArgumentOverload_WithValidArguments_ShouldNotThrow()
+    {
+        // Arrange
+        var jsRuntime = new Mock<IJSRuntime>();
+        jsRuntime.Setup(x => x.InvokeAsync<object>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(new object());
+        jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
+        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+
+        // Act
+        await queryProvider.ExecuteAsync("CountAsync", CancellationToken.None);
+    }
+
+
 }

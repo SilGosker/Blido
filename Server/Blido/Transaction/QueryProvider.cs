@@ -80,4 +80,16 @@ public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntit
 
         throw new ArgumentException($"Method name '{methodName}' is not supported.");
     }
+
+    public async Task ExecuteAsync(string methodName, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+        if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
+        {
+            await Materializer.ExecuteAsync<TEntity, object?>(_jsRuntime, _objectStore, _jsExpressionBuilder,
+                _transactionConditions, jsMethodName, cancellationToken);
+            return;
+        }
+        throw new ArgumentException($"Method name '{methodName}' is not supported.");
+    }
 }

@@ -6,27 +6,22 @@ using Microsoft.JSInterop;
 
 namespace Blido.Core.Transaction;
 
-public class TransactionProvider<TEntity> : ITransactionProvider<TEntity> where TEntity : class
+public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntity : class
 {
     private readonly TransactionConditions<TEntity> _transactionConditions = new();
     private readonly IJSRuntime _jsRuntime;
-    private readonly IndexedDbDatabase _database;
     private readonly IExpressionBuilder _jsExpressionBuilder;
     private ObjectStore<TEntity> _objectStore = null!;
 
-    public TransactionProvider(IJSRuntime jsRuntime,
-        IndexedDbDatabase database,
-        IExpressionBuilder jsExpressionBuilder)
+    public QueryProvider(IJSRuntime jsRuntime, IExpressionBuilder jsExpressionBuilder)
     {
         ArgumentNullException.ThrowIfNull(jsRuntime);
-        ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(jsExpressionBuilder);
         _jsRuntime = jsRuntime;
-        _database = database;
         _jsExpressionBuilder = jsExpressionBuilder;
     }
 
-    void ITransactionProvider.SetObjectStore(object objectStore)
+    void IQueryProvider.SetObjectStore(object objectStore)
     {
         _objectStore = (ObjectStore<TEntity>)objectStore;
     }
@@ -45,9 +40,27 @@ public class TransactionProvider<TEntity> : ITransactionProvider<TEntity> where 
 
         if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
         {
-            return await SelectorMaterializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore,
+            var result = await SelectorMaterializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore,
                 _jsExpressionBuilder,
                 _transactionConditions, selector, jsMethodName, cancellationToken);
+            _transactionConditions.Clear();
+            return result;
+        }
+
+        throw new ArgumentException($"Method name '{methodName}' is not supported.");
+    }
+
+    public async Task<TResult> ExecuteAsync<TResult>(string methodName, object identifiers, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+        ArgumentNullException.ThrowIfNull(identifiers);
+
+        if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
+        {
+            var result = await Materializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
+                identifiers, jsMethodName, cancellationToken);
+            _transactionConditions.Clear();
+            return result;
         }
 
         throw new ArgumentException($"Method name '{methodName}' is not supported.");
@@ -59,8 +72,10 @@ public class TransactionProvider<TEntity> : ITransactionProvider<TEntity> where 
 
         if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
         {
-            return await Materializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
+            var result = await Materializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
                 _transactionConditions, jsMethodName, cancellationToken);
+            _transactionConditions.Clear();
+            return result;
         }
 
         throw new ArgumentException($"Method name '{methodName}' is not supported.");

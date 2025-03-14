@@ -1,6 +1,6 @@
 ﻿namespace Blido.Core.Transaction;
 
-public interface ITransactionProvider
+public interface IQueryProvider
 {
     internal void SetObjectStore(object objectStore);
 }

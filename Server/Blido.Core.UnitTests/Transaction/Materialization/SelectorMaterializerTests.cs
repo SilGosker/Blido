@@ -19,7 +19,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -49,7 +49,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         TransactionConditions<object> conditions = null!;
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -77,7 +77,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         string methodName = null!;
         var cancellationToken = CancellationToken.None;
@@ -105,7 +105,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -136,7 +136,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         var cancellationToken = CancellationToken.None; 
         
@@ -163,7 +163,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -199,7 +199,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         conditions.AddCondition(x => true);
         conditions.AddCondition(x => false);
@@ -239,7 +239,7 @@ public class SelectorMaterializerTests
             new IndexedDbDatabase(
                 new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
                 jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new TransactionProvider<object>(jsRuntimeMock.Object, database, expressionBuilder.Object));
+        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;

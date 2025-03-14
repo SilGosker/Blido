@@ -1,11 +1,10 @@
-﻿using System.Linq.Expressions;
-using Blido.Core.Transaction.JsExpression;
+﻿using Blido.Core.Transaction.JsExpression;
 using Microsoft.JSInterop;
 using Moq;
 
 namespace Blido.Core.Transaction;
 
-public class TransactionProviderTests
+public class QueryProviderTests
 {
     [Fact]
     public void Constructor_WithNullJsRuntime_ShouldThrowArgumentNullException()
@@ -18,28 +17,11 @@ public class TransactionProviderTests
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         
         // Act
-        Action act = () => new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
+        Action act = () => new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
         Assert.Equal("jsRuntime", exception.ParamName);
-    }
-
-    [Fact]
-    public void Constructor_WithNullDatabase_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var jsRuntime = new Mock<IJSRuntime>().Object;
-        var objectStoreFactory = new Mock<IObjectStoreFactory>();
-        objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
-        IndexedDbDatabase database = null!;
-        var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-
-        // Act
-        Action act = () => new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
-        // Assert
-        var exception = Assert.Throws<ArgumentNullException>(act);
-        Assert.Equal("database", exception.ParamName);
     }
 
     [Fact]
@@ -53,7 +35,7 @@ public class TransactionProviderTests
         IExpressionBuilder jsExpressionBuilder = null!;
 
         // Act
-        Action act = () => new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
+        Action act = () => new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -69,7 +51,7 @@ public class TransactionProviderTests
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
         var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
+        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
 
         // Act
         Action act = () => transactionProvider.Where(null!);
@@ -87,7 +69,7 @@ public class TransactionProviderTests
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
         var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
+        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
         // Act
         Func<Task> act = async () => await transactionProvider.ExecuteAsync<object>(null!, CancellationToken.None);
         // Assert
@@ -103,7 +85,7 @@ public class TransactionProviderTests
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
         var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
+        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
         // Act
         Func<Task> act = async () => await transactionProvider.ExecuteAsync<object>("methodName", null!, CancellationToken.None);
         // Assert
@@ -119,7 +101,7 @@ public class TransactionProviderTests
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime);
         var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new TransactionProvider<object>(jsRuntime, database, jsExpressionBuilder);
+        var transactionProvider = new QueryProvider<object>(jsRuntime, jsExpressionBuilder);
         // Act
         Func<Task> act = async () => await transactionProvider.ExecuteAsync<object>("unsupportedMethodName", CancellationToken.None);
         // Assert
@@ -136,8 +118,8 @@ public class TransactionProviderTests
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
         var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object); var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
-        var transactionProvider = new TransactionProvider<object>(jsRuntime.Object, database, jsExpressionBuilder);
-        ((ITransactionProvider)transactionProvider).SetObjectStore(new ObjectStore<object>(database, transactionProvider));
+        var transactionProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
+        ((IQueryProvider)transactionProvider).SetObjectStore(new ObjectStore<object>(database, transactionProvider));
         // Act
         var result = await transactionProvider.ExecuteAsync<bool>("AnyAsync");
         

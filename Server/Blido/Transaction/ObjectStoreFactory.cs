@@ -21,8 +21,8 @@ public class ObjectStoreFactory : IObjectStoreFactory
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(entityType);
 
-        var transactionProviderType = typeof(TransactionProvider<>).MakeGenericType(entityType);
-        var transactionProvider = (ITransactionProvider)Activator.CreateInstance(transactionProviderType, _jsRuntime, database, _expressionBuilder)!;
+        var transactionProviderType = typeof(QueryProvider<>).MakeGenericType(entityType);
+        var transactionProvider = (IQueryProvider)Activator.CreateInstance(transactionProviderType, _jsRuntime, _expressionBuilder)!;
         
         var objectStoreType = typeof(ObjectStore<>).MakeGenericType(entityType);
         var objectStore = Activator.CreateInstance(objectStoreType, database, transactionProvider)!;

@@ -144,4 +144,20 @@ public class TransactionConditionsTests
         Assert.False(result1);
         Assert.True(result2);
     }
+
+    [Fact]
+    public void Clear_ClearsConditions()
+    {
+        // Arrange
+        var conditions = new TransactionConditions<object>();
+        conditions.AddCondition(e => true);
+        conditions.AddCondition(e => false);
+
+        // Act
+        conditions.Clear();
+        
+        // Assert
+        Assert.Equal(0, conditions.Count);
+        Assert.False(conditions.HasConditions);
+    }
 }

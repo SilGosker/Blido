@@ -57,7 +57,7 @@ public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntit
 
         if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))
         {
-            var result = await Materializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
+            var result = await IdentifierMaterializer.ExecuteAsync<TEntity, TResult>(_jsRuntime, _objectStore, _jsExpressionBuilder,
                 identifiers, jsMethodName, cancellationToken);
             _transactionConditions.Clear();
             return result;

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Blido.Core.Helpers;
+using Blido.Core.Transaction.Mutation.KeyGeneration.KeyGenerators;
 
 namespace Blido.Core.Transaction.Mutation.KeyGeneration;
 
@@ -9,6 +10,11 @@ public class KeyGeneratorFactory : IKeyGeneratorFactory
 {
     private IReadOnlyDictionary<Type, GenerateKeyDelegate> _keyGenerators = new Dictionary<Type, GenerateKeyDelegate>();
 
+    public KeyGeneratorFactory()
+    {
+        AddOrReplace<NumberKeyGenerator>();
+        AddOrReplace<GuidKeyGenerator>();
+    }
     public bool TryGetValue(PropertyInfo key, [MaybeNullWhen(false)] out GenerateKeyDelegate value)
     {
         ArgumentNullException.ThrowIfNull(key);

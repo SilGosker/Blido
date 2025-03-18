@@ -21,10 +21,11 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<IBinaryTranslatorFactory, JsBinaryTranslatorFactory>();
         serviceCollection.AddSingleton<IUnaryTranslatorFactory, JsUnaryTranslatorFactory>();
         serviceCollection.AddSingleton<IKeyGeneratorFactory, KeyGeneratorFactory>();
+        serviceCollection.AddSingleton<KeyGeneratorMiddleware>();
 
         serviceCollection.AddScoped<IExpressionBuilder, JsExpressionBuilder>();
         serviceCollection.AddScoped<IObjectStoreFactory, ObjectStoreFactory>();
-        
+
         return serviceCollection;
     }
 }

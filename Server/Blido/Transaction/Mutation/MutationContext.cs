@@ -1,16 +1,17 @@
-﻿namespace Blido.Core.Transaction.Mutation;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-public class MutationContext<TEntity> : IAsyncDisposable
-    where TEntity : class 
+namespace Blido.Core.Transaction.Mutation;
+
+public class MutationContext : IAsyncDisposable
 {
-    private readonly ITransactionProvider<TEntity> _queryProvider;
     private readonly List<Type> _pipelineTypes;
-    public MutationContext(ITransactionProvider<TEntity> queryProvider, List<Type> pipelineTypes)
+    private readonly IServiceScope _serviceScope;
+    public MutationContext(List<Type> pipelineTypes, IServiceScope serviceScope)
     {
-        ArgumentNullException.ThrowIfNull(queryProvider);
         ArgumentNullException.ThrowIfNull(pipelineTypes);
-        _queryProvider = queryProvider;
+        ArgumentNullException.ThrowIfNull(serviceScope);
         _pipelineTypes = pipelineTypes;
+        _serviceScope = serviceScope;
     }
 
     public List<MutationEntityContext> Entities { get; } = new();

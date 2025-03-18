@@ -136,6 +136,23 @@ public class ServiceCollectionExtensionsTests
         Assert.IsType<KeyGeneratorFactory>(keyGeneratorFactory);
     }
 
+    [Fact]
+    public void RegisterIndexedDbDatabase_ShouldRegisterKeyGeneratorMiddleware()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+
+        // Act
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
+
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var keyGeneratorMiddleware = serviceProvider.GetRequiredService<KeyGeneratorMiddleware>();
+        Assert.NotNull(keyGeneratorMiddleware);
+    }
+
 
     [Fact]
     public void RegisterIndexedDbDatabase_ShouldRegisterJsExpressionBuilder()

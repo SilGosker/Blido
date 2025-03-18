@@ -4,6 +4,7 @@ using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
 using Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 using Blido.Core.Transaction.JsExpression.UnaryTranslation;
+using Blido.Core.Transaction.Mutation.KeyGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blido.Core.Extensions;
@@ -19,9 +20,11 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<IMemberTranslatorFactory, JsMemberTranslatorFactory>();
         serviceCollection.AddSingleton<IBinaryTranslatorFactory, JsBinaryTranslatorFactory>();
         serviceCollection.AddSingleton<IUnaryTranslatorFactory, JsUnaryTranslatorFactory>();
+        serviceCollection.AddSingleton<IKeyGeneratorFactory, KeyGeneratorFactory>();
+
         serviceCollection.AddScoped<IExpressionBuilder, JsExpressionBuilder>();
         serviceCollection.AddScoped<IObjectStoreFactory, ObjectStoreFactory>();
-
+        
         return serviceCollection;
     }
 }

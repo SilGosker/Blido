@@ -4,6 +4,7 @@ using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
 using Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 using Blido.Core.Transaction.JsExpression.UnaryTranslation;
+using Blido.Core.Transaction.Mutation.KeyGeneration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Moq;
@@ -117,6 +118,24 @@ public class ServiceCollectionExtensionsTests
         Assert.IsType<JsUnaryTranslatorFactory>(unaryTranslatorFactory);
     }
 
+    [Fact]
+    public void RegisterIndexedDbDatabase_ShouldRegisterKeyGeneratorFactory()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+
+        // Act
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
+        
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var keyGeneratorFactory = serviceProvider.GetRequiredService<IKeyGeneratorFactory>();
+        Assert.NotNull(keyGeneratorFactory);
+        Assert.IsType<KeyGeneratorFactory>(keyGeneratorFactory);
+    }
+
 
     [Fact]
     public void RegisterIndexedDbDatabase_ShouldRegisterJsExpressionBuilder()
@@ -137,7 +156,7 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void RegisterIndexedDbDatabase_ShouldRegisterIndexedDbTransactionProviderFactory()
+    public void RegisterIndexedDbDatabase_ShouldRegisterObjectStoreFactory()
     {
         // Arrange
         var serviceCollection = new ServiceCollection();

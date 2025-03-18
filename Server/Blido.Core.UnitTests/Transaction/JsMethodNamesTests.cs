@@ -1,4 +1,6 @@
-﻿namespace Blido.Core.Transaction;
+﻿using Blido.Core.Helpers;
+
+namespace Blido.Core.Transaction;
 
 public class JsMethodNamesTests
 {
@@ -105,6 +107,24 @@ public class JsMethodNamesTests
     }
 
     [Fact]
+    public void Insert_EqualsBlidoDotInsert()
+    {
+        Assert.Equal("blido.insert", JsMethodNames.Insert);
+    }
+
+    [Fact]
+    public void Update_EqualsBlidoDotUpdate()
+    {
+        Assert.Equal("blido.update", JsMethodNames.Update);
+    }
+
+    [Fact]
+    public void Delete_EqualsBlidoDotDelete()
+    {
+        Assert.Equal("blido.delete", JsMethodNames.Delete);
+    }
+
+    [Fact]
     public void MaterializerMethodNames_ContainAllIObjectStoreMethodNames()
     {
         // Arrange
@@ -115,6 +135,9 @@ public class JsMethodNamesTests
         var materializerMethodNames = JsMethodNames.MaterializerMethodNames.Keys.ToList();
 
         // Assert
-        Assert.True(methodNames.All(methodNames.Contains));
+        foreach (string methodName in methodNames)
+        {
+            Assert.Contains(methodName, materializerMethodNames);
+        }
     }
 }

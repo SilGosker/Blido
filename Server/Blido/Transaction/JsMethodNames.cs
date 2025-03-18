@@ -21,6 +21,9 @@ public class JsMethodNames
     public const string Average = RootObjectName + "average";
     public const string Min = RootObjectName + "min";
     public const string Max = RootObjectName + "max";
+    public const string Insert = RootObjectName + "insert";
+    public const string Update = RootObjectName + "update";
+    public const string Delete = RootObjectName + "delete";
 
     public static readonly FrozenDictionary<string, string> MaterializerMethodNames = new Dictionary<string, string>
     {
@@ -40,6 +43,9 @@ public class JsMethodNames
         {nameof(IObjectStore<string>.SumAsync), Sum},
         {nameof(IObjectStore<string>.AverageAsync), Average},
         {nameof(IObjectStore<string>.MinAsync), Min},
-        {nameof(IObjectStore<string>.MaxAsync), Max}
+        {nameof(IObjectStore<string>.MaxAsync), Max},
+        {nameof(IMutableObjectStore<string>.InsertAsync), Insert},
+        {nameof(IMutableObjectStore<string>.UpdateAsync), Update},
+        {nameof(IMutableObjectStore<string>.DeleteAsync), Delete}
     }.ToFrozenDictionary();
 }

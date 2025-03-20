@@ -2,5 +2,5 @@
 
 public interface IBlidoMiddleware
 {
-    public ValueTask ExecuteAsync(MutationContext context, ProcessNextDelegate next);
+    public ValueTask ExecuteAsync(MutationContext context, ProcessNextDelegate next, CancellationToken cancellationToken);
 }

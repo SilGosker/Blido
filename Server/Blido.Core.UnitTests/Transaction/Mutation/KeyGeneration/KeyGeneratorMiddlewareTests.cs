@@ -38,7 +38,7 @@ public class KeyGeneratorMiddlewareTests
         var middleware = new KeyGeneratorMiddleware(keyGeneratorFactory);
 
         // Act
-        middleware.ExecuteAsync(context, () => ValueTask.CompletedTask);
+        middleware.ExecuteAsync(context, () => ValueTask.CompletedTask, CancellationToken.None);
 
         // Assert
         Assert.NotNull(newEntity.Key);

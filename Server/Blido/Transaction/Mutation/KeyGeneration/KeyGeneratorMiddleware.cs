@@ -11,7 +11,7 @@ public class KeyGeneratorMiddleware : IBlidoMiddleware
         _keyGeneratorFactory = keyGeneratorFactory;
     }
 
-    public ValueTask ExecuteAsync(MutationContext context, ProcessNextDelegate next)
+    public ValueTask ExecuteAsync(MutationContext context, ProcessNextDelegate next, CancellationToken cancellationToken)
     {
         foreach (var entityContext in context.Entities)
         {

@@ -22,7 +22,9 @@ public class MutationContext : IAsyncDisposable
         if (_index < _pipelineTypes.Count)
         {
             var middlewareType = _pipelineTypes[_index];
-            var middleware = (IBlidoMiddleware)_serviceScope.ServiceProvider.GetRequiredService(middlewareType);
+            var middleware = (IBlidoMiddleware?)_serviceScope.ServiceProvider.GetService(middlewareType)
+                             ?? (IBlidoMiddleware)ActivatorUtilities.CreateInstance(_serviceScope.ServiceProvider, middlewareType);
+
             await middleware.ExecuteAsync(this, () => SaveChangesAsync(cancellationToken), cancellationToken);
         }
     }

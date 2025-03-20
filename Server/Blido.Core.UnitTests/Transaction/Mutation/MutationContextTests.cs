@@ -50,4 +50,45 @@ public class MutationContextTests
         Assert.NotNull(context.Entities);
         Assert.Empty(context.Entities);
     }
+
+    [Fact]
+    public async Task SaveChangesAsync_InvokesMiddleware()
+    {
+        // Arrange
+        MockBlidoMiddleware.TotalTimesCalled = 0;
+        var serviceScope = new Mock<IServiceScope>();
+        serviceScope.SetupGet(x => x.ServiceProvider).Returns(new Mock<IServiceProvider>().Object);
+        var pipelineTypes = new List<Type>()
+        {
+            typeof(MockBlidoMiddleware),
+            typeof(MockBlidoMiddleware)
+        };
+        var context = new MutationContext(pipelineTypes, serviceScope.Object);
+
+        // Act
+        await context.SaveChangesAsync();
+
+        // Assert
+        Assert.Equal(2, MockBlidoMiddleware.TotalTimesCalled);
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_GetsServiceFromDependencyContainer()
+    {
+        // Arrange
+        var mockBlidoMiddleware = new MockBlidoMiddleware();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddSingleton(mockBlidoMiddleware);
+        var pipelines = new List<Type>() { typeof(MockBlidoMiddleware), typeof(MockBlidoMiddleware) };
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var mockServiceScope = new Mock<IServiceScope>();
+        mockServiceScope.SetupGet(x => x.ServiceProvider).Returns(serviceProvider);
+        var context = new MutationContext(pipelines, mockServiceScope.Object);
+
+        // Act
+        await context.SaveChangesAsync();
+
+        // Assert
+        Assert.Equal(2, mockBlidoMiddleware.TimesCalled);
+    }
 }

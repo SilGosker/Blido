@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+using Blido.Core.Transaction.JsExpression;
 using Blido.Core.Transaction.Mutation.KeyGeneration.KeyGenerators;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Moq;
 
 namespace Blido.Core.Transaction.Mutation.KeyGeneration;
@@ -26,15 +28,16 @@ public class KeyGeneratorMiddlewareTests
     {
         // Arrange
         var keyGeneratorFactory = new KeyGeneratorFactory();
-        var context = new MutationContext(new List<Type>(), new AsyncServiceScope());
+        var jsRuntime = new Mock<IJSRuntime>();
+        var context = new MutationContext(new List<Type>(), new AsyncServiceScope(), new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, jsRuntime.Object)));
         var updatedEntityId = Guid.NewGuid();
         var newEntity = new EntityWithGuidKey();
         var updateEntity = new EntityWithGuidKey
         {
             Key = updatedEntityId
         };
-        context.Entities.Add(new MutationEntityContext(newEntity, MutationState.Added));
-        context.Entities.Add(new MutationEntityContext(updateEntity, MutationState.Modified));
+        context.Insert(newEntity);
+        context.Update(updateEntity);
         var middleware = new KeyGeneratorMiddleware(keyGeneratorFactory);
 
         // Act

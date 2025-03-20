@@ -6,6 +6,5 @@ public class EntityWithIdAndKey
 {
     public int Id { get; set; }
 
-    [Key]
-    public string Key { get; set; }
+    [Key] public string Key { get; set; } = string.Empty;
 }

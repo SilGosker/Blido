@@ -2,20 +2,23 @@
 
 namespace Blido.Core.Transaction.Mutation;
 
-public class MutationContext : IAsyncDisposable
+public class MutationContext: IAsyncDisposable
 {
     private readonly List<Type> _pipelineTypes;
     private readonly IServiceScope _serviceScope;
+    private readonly List<MutationEntityContext> _entities = new();
     private int _index = -1;
-    public MutationContext(List<Type> pipelineTypes, IServiceScope serviceScope)
+    private readonly IndexedDbContext _context;
+    public MutationContext(List<Type> pipelineTypes, IServiceScope serviceScope, IndexedDbContext context)
     {
         ArgumentNullException.ThrowIfNull(pipelineTypes);
         ArgumentNullException.ThrowIfNull(serviceScope);
         _pipelineTypes = pipelineTypes;
         _serviceScope = serviceScope;
+        _context = context;
     }
 
-    public List<MutationEntityContext> Entities { get; } = new();
+    public IReadOnlyList<MutationEntityContext> Entities => _entities.AsReadOnly();
     public async ValueTask SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         _index++;
@@ -27,6 +30,21 @@ public class MutationContext : IAsyncDisposable
 
             await middleware.ExecuteAsync(this, () => SaveChangesAsync(cancellationToken), cancellationToken);
         }
+    }
+
+    public void Insert<TEntity>(TEntity entity) where TEntity : class
+    {
+        _entities.Add(MutationEntityContext.Insert(entity));
+    }
+
+    public void Update<TEntity>(TEntity entity) where TEntity : class
+    {
+        _entities.Add(MutationEntityContext.Update(entity));
+    }
+
+    public void Delete<TEntity>(TEntity entity) where TEntity : class
+    {
+        _entities.Add(MutationEntityContext.Delete(entity));
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()

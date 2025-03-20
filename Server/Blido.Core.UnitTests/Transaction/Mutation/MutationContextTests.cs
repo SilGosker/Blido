@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using Blido.Core.Transaction.JsExpression;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Moq;
 
 namespace Blido.Core.Transaction.Mutation;
@@ -12,9 +14,11 @@ public class MutationContextTests
         // Arrange
         IServiceScope serviceScope = null!;
         var pipelineTypes = new List<Type>();
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
 
         // Act
-        Action act = () => new MutationContext(pipelineTypes, serviceScope);
+        Action act = () => new MutationContext(pipelineTypes, serviceScope, database);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -27,9 +31,11 @@ public class MutationContextTests
         // Arrange
         var serviceScope = new Mock<IServiceScope>().Object;
         List<Type> pipelineTypes = null!;
-        
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+
         // Act
-        Action act = () => new MutationContext(pipelineTypes, serviceScope);
+        Action act = () => new MutationContext(pipelineTypes, serviceScope, database);
         
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(act);
@@ -42,13 +48,75 @@ public class MutationContextTests
         // Arrange
         var serviceScope = new Mock<IServiceScope>().Object;
         var pipelineTypes = new List<Type>();
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
 
         // Act
-        var context = new MutationContext(pipelineTypes, serviceScope);
+        var context = new MutationContext(pipelineTypes, serviceScope, database);
         
         // Assert
         Assert.NotNull(context.Entities);
         Assert.Empty(context.Entities);
+    }
+
+    [Fact]
+    public void Insert_AddsMutationEntityContext_ToEntities()
+    {
+        // Arrange
+        var serviceScope = new Mock<IServiceScope>().Object;
+        var pipelineTypes = new List<Type>();
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+        var context = new MutationContext(pipelineTypes, serviceScope, database);
+        var entity = new object();
+
+        // Act
+        context.Insert(entity);
+        
+        // Assert
+        Assert.Single(context.Entities);
+        Assert.Same(entity, context.Entities[0].BeforeChange);
+        Assert.Equal(MutationState.Added, context.Entities[0].State);
+    }
+
+    [Fact]
+    public void Update_AddsMutationEntityContext_ToEntities()
+    {
+        // Arrange
+        var serviceScope = new Mock<IServiceScope>().Object;
+        var pipelineTypes = new List<Type>();
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+        var context = new MutationContext(pipelineTypes, serviceScope, database);
+        var entity = new object();
+
+        // Act
+        context.Update(entity);
+
+        // Assert
+        Assert.Single(context.Entities);
+        Assert.Same(entity, context.Entities[0].BeforeChange);
+        Assert.Equal(MutationState.Modified, context.Entities[0].State);
+    }
+
+    [Fact]
+    public void Delete_AddsMutationEntityContext_ToEntities()
+    {
+        // Arrange
+        var serviceScope = new Mock<IServiceScope>().Object;
+        var pipelineTypes = new List<Type>();
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+        var context = new MutationContext(pipelineTypes, serviceScope, database);
+        var entity = new object();
+
+        // Act
+        context.Delete(entity);
+        
+        // Assert
+        Assert.Single(context.Entities);
+        Assert.Same(entity, context.Entities[0].BeforeChange);
+        Assert.Equal(MutationState.Deleted, context.Entities[0].State);
     }
 
     [Fact]
@@ -63,7 +131,9 @@ public class MutationContextTests
             typeof(MockBlidoMiddleware),
             typeof(MockBlidoMiddleware)
         };
-        var context = new MutationContext(pipelineTypes, serviceScope.Object);
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+        var context = new MutationContext(pipelineTypes, serviceScope.Object, database);
 
         // Act
         await context.SaveChangesAsync();
@@ -83,7 +153,9 @@ public class MutationContextTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
         var mockServiceScope = new Mock<IServiceScope>();
         mockServiceScope.SetupGet(x => x.ServiceProvider).Returns(serviceProvider);
-        var context = new MutationContext(pipelines, mockServiceScope.Object);
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+        var context = new MutationContext(pipelines, mockServiceScope.Object, database);
 
         // Act
         await context.SaveChangesAsync();

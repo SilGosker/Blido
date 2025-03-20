@@ -73,4 +73,20 @@ public class MutationEntityContextTests
         Assert.Single(context.PrimaryKeys);
         Assert.Equal("Id", context.PrimaryKeys.First().Name);
     }
+
+    [Theory]
+    [InlineData(MutationState.Added)]
+    [InlineData(MutationState.Deleted)]
+    [InlineData(MutationState.Modified)]
+    public void StateMethodName_ReturnsJsMethodName(MutationState state)
+    {
+        var entity = new { Id = 1 };
+        var mutationContext = new MutationEntityContext(entity, state);
+
+        // Act
+        var methodName = mutationContext.StateMethodName;
+
+        // Assert
+        Assert.True(JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out _));
+    }
 }

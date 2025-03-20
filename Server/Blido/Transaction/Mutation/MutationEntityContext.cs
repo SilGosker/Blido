@@ -20,5 +20,12 @@ public class MutationEntityContext
     public object BeforeChange { get; private set; }
     public object? AfterChange { get; internal set; }
     public MutationState State { get; private set; }
+    internal string StateMethodName => State switch
+    {
+        MutationState.Added => "InsertAsync",
+        MutationState.Modified => "UpdateAsync",
+        MutationState.Deleted => "DeleteAsync",
+        _ => throw new ArgumentOutOfRangeException(nameof(State))
+    };
     public PropertyInfo[] PrimaryKeys { get; private set; }
 }

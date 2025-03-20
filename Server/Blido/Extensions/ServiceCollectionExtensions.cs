@@ -4,6 +4,7 @@ using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
 using Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 using Blido.Core.Transaction.JsExpression.UnaryTranslation;
+using Blido.Core.Transaction.Mutation;
 using Blido.Core.Transaction.Mutation.KeyGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,6 @@ public static class ServiceCollectionExtensions
         where TDatabase : IndexedDbContext
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
-        serviceCollection.AddScoped<TDatabase>();
         serviceCollection.AddSingleton<IMethodCallTranslatorFactory, JsMethodCallTranslatorFactory>();
         serviceCollection.AddSingleton<IMemberTranslatorFactory, JsMemberTranslatorFactory>();
         serviceCollection.AddSingleton<IBinaryTranslatorFactory, JsBinaryTranslatorFactory>();
@@ -23,6 +23,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<IKeyGeneratorFactory, KeyGeneratorFactory>();
         serviceCollection.AddSingleton<KeyGeneratorMiddleware>();
 
+        serviceCollection.AddScoped<TDatabase>();
+        serviceCollection.AddScoped<MutateMiddleware>();
         serviceCollection.AddScoped<IExpressionBuilder, JsExpressionBuilder>();
         serviceCollection.AddScoped<IObjectStoreFactory, ObjectStoreFactory>();
 

@@ -4,6 +4,7 @@ using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
 using Blido.Core.Transaction.JsExpression.MethodCallTranslation;
 using Blido.Core.Transaction.JsExpression.UnaryTranslation;
+using Blido.Core.Transaction.Mutation;
 using Blido.Core.Transaction.Mutation.KeyGeneration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -134,6 +135,23 @@ public class ServiceCollectionExtensionsTests
         var keyGeneratorFactory = serviceProvider.GetRequiredService<IKeyGeneratorFactory>();
         Assert.NotNull(keyGeneratorFactory);
         Assert.IsType<KeyGeneratorFactory>(keyGeneratorFactory);
+    }
+
+    [Fact]
+    public void RegisterIndexedDbDatabase_ShouldRegisterMutateMiddleware()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+
+        // Act
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
+
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var mutateMiddleware = serviceProvider.GetRequiredService<MutateMiddleware>();
+        Assert.NotNull(mutateMiddleware);
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-﻿using System.Collections.Frozen;
+using System.Collections.Frozen;
 
 namespace Blido.Core.Transaction;
 
@@ -24,6 +24,7 @@ public class JsMethodNames
     public const string Insert = RootObjectName + "insert";
     public const string Update = RootObjectName + "update";
     public const string Delete = RootObjectName + "delete";
+    public const string Mutate = RootObjectName + "mutate";
 
     public static readonly FrozenDictionary<string, string> MaterializerMethodNames = new Dictionary<string, string>
     {

@@ -14,6 +14,7 @@ public class MutationContext: IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(pipelineTypes);
         ArgumentNullException.ThrowIfNull(serviceScope);
+        ArgumentNullException.ThrowIfNull(context);
         _pipelineTypes = pipelineTypes;
         _serviceScope = serviceScope;
         _context = context;

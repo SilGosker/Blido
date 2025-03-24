@@ -43,6 +43,22 @@ public class MutationContextTests
     }
 
     [Fact]
+    public void Constructor_WhenContextIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var serviceScope = new Mock<IServiceScope>().Object;
+        var pipelineTypes = new List<Type>();
+        IndexedDbContext context = null!;
+
+        // Act
+        Action act = () => new MutationContext(pipelineTypes, serviceScope, context);
+
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(act);
+        Assert.Equal("context", exception.ParamName);
+    }
+
+    [Fact]
     public void Constructor_InitializesEntities()
     {
         // Arrange

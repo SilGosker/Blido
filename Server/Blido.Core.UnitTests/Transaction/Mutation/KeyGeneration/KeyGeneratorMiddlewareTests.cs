@@ -29,7 +29,7 @@ public class KeyGeneratorMiddlewareTests
         // Arrange
         var keyGeneratorFactory = new KeyGeneratorFactory();
         var jsRuntime = new Mock<IJSRuntime>();
-        var context = new MutationContext(new List<Type>(), new AsyncServiceScope(), new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, jsRuntime.Object)));
+        var context = new MutationContext(new List<Type>(), new AsyncServiceScope(), new MockIndexedDbDatabaseWithPrimaryKeySetProperties(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, jsRuntime.Object)));
         var updatedEntityId = Guid.NewGuid();
         var newEntity = new EntityWithGuidKey();
         var updateEntity = new EntityWithGuidKey

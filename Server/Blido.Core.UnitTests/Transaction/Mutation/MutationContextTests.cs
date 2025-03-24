@@ -65,7 +65,7 @@ public class MutationContextTests
         // Arrange
         var serviceScope = new Mock<IServiceScope>().Object;
         var pipelineTypes = new List<Type>();
-        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+        var database = new MockIndexedDbDatabaseWithObjectStoreSetProperties(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
             new Mock<IJSRuntime>().Object));
         var context = new MutationContext(pipelineTypes, serviceScope, database);
         var entity = new object();
@@ -85,7 +85,7 @@ public class MutationContextTests
         // Arrange
         var serviceScope = new Mock<IServiceScope>().Object;
         var pipelineTypes = new List<Type>();
-        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+        var database = new MockIndexedDbDatabaseWithObjectStoreSetProperties(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
             new Mock<IJSRuntime>().Object));
         var context = new MutationContext(pipelineTypes, serviceScope, database);
         var entity = new object();
@@ -105,7 +105,7 @@ public class MutationContextTests
         // Arrange
         var serviceScope = new Mock<IServiceScope>().Object;
         var pipelineTypes = new List<Type>();
-        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+        var database = new MockIndexedDbDatabaseWithObjectStoreSetProperties(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
             new Mock<IJSRuntime>().Object));
         var context = new MutationContext(pipelineTypes, serviceScope, database);
         var entity = new object();

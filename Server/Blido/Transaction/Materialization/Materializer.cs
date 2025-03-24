@@ -7,7 +7,7 @@ namespace Blido.Core.Transaction.Materialization;
 
 public class Materializer
 {
-    public static async Task<TResult> ExecuteAsync<TEntity, TResult>(IJSRuntime jsRuntime,
+    public static async ValueTask<TResult> ExecuteAsync<TEntity, TResult>(IJSRuntime jsRuntime,
         ObjectStore<TEntity> objectStore,
         IExpressionBuilder expressionBuilder,
         TransactionConditions<TEntity> conditions,

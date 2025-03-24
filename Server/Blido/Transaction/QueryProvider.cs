@@ -33,7 +33,7 @@ public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntit
         return this;
     }
 
-    public async Task<TResult> ExecuteAsync<TResult>(string methodName, Expression<Func<TEntity, TResult>> selector, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> ExecuteAsync<TResult>(string methodName, Expression<Func<TEntity, TResult>> selector, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
         ArgumentNullException.ThrowIfNull(selector);
@@ -50,7 +50,7 @@ public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntit
         throw new ArgumentException($"Method name '{methodName}' is not supported.");
     }
 
-    public async Task<TResult> ExecuteAsync<TResult>(string methodName, object identifiers, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> ExecuteAsync<TResult>(string methodName, object identifiers, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
         ArgumentNullException.ThrowIfNull(identifiers);
@@ -66,7 +66,7 @@ public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntit
         throw new ArgumentException($"Method name '{methodName}' is not supported.");
     }
 
-    public async Task<TResult> ExecuteAsync<TResult>(string methodName, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> ExecuteAsync<TResult>(string methodName, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
 
@@ -81,7 +81,7 @@ public class QueryProvider<TEntity> : ITransactionProvider<TEntity> where TEntit
         throw new ArgumentException($"Method name '{methodName}' is not supported.");
     }
 
-    public async Task ExecuteAsync(string methodName, CancellationToken cancellationToken = default)
+    public async ValueTask ExecuteAsync(string methodName, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
         if (JsMethodNames.MaterializerMethodNames.TryGetValue(methodName, out string? jsMethodName))

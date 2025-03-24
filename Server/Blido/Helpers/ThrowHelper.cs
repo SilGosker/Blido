@@ -44,7 +44,7 @@ public class ThrowHelper
 
         throw new NotSupportedException(sb.ToString());
     }
-
+    
     public static void ThrowUnsupportedException(UnaryExpression unary)
     {
         ArgumentNullException.ThrowIfNull(unary);
@@ -67,7 +67,8 @@ public class ThrowHelper
         throw new NotSupportedException(sb.ToString());
     }
 
-    public static void ThrowDictionaryIsNotReadonlyException<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> readonlyDictionary, out Dictionary<TKey, TValue> dictionary)
+    public static void ThrowDictionaryIsNotReadonlyException<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> readonlyDictionary,
+        out Dictionary<TKey, TValue> dictionary)
         where TKey : notnull
     {
         if (readonlyDictionary is not Dictionary<TKey, TValue> tempDictionary)
@@ -75,5 +76,13 @@ public class ThrowHelper
             throw new InvalidOperationException("Cannot add custom translator after configuration.");
         }
         dictionary = tempDictionary;
+    }
+
+    public static void ThrowTypeNotInObjectStores(Type entityType, IndexedDbContext context)
+    {
+        if (!context.ObjectStoreTypes.Contains(entityType))
+        {
+            throw new InvalidOperationException($"The entity of type {entityType} is not present in any of the objectstores in context {context.GetType()}");
+        }
     }
 }

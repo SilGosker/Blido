@@ -7,6 +7,7 @@ public abstract class IndexedDbContext
 {
     private readonly IObjectStoreFactory _transactionProviderFactory;
     public IndexedDbDatabase Database { get; }
+    internal HashSet<Type> ObjectStoreTypes { get; } = new();
     protected IndexedDbContext(IObjectStoreFactory transactionProviderFactory)
     {
         ArgumentNullException.ThrowIfNull(transactionProviderFactory);
@@ -33,12 +34,16 @@ public abstract class IndexedDbContext
         foreach (var propertyInfo in properties)
         {
             var propertyType = propertyInfo.PropertyType;
-            if (!propertyType.IsGenericType || !propertyInfo.CanWrite) continue;
+            if (!propertyType.IsGenericType) continue;
 
             var genericType = propertyType.GetGenericTypeDefinition();
             if (genericType != typeof(ObjectStore<>)) continue;
+            var entityType = propertyType.GetGenericArguments()[0];
+            ObjectStoreTypes.Add(entityType);
 
-            var objectStore = ObjectStore(propertyType.GetGenericArguments()[0]);
+            if (!propertyInfo.CanWrite) continue;
+
+            var objectStore = ObjectStore(entityType);
             propertyInfo.SetValue(this, objectStore);
         }
     }

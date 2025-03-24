@@ -10,5 +10,5 @@ public class MockIndexedDbDatabaseWithObjectStoreSetProperties : IndexedDbContex
     }
 
     public ObjectStore<string> Strings { get; set; } = null!;
-    public ObjectStore<Exception> Exceptions { get; set; } = null!;
+    public ObjectStore<object> Objects { get; set; } = null!;
 }

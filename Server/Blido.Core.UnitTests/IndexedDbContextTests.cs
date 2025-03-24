@@ -45,9 +45,9 @@ public class IndexedDbContextTests
         mockTransactionProviderFactory.Setup(x => x.GetObjectStore(It.IsAny<IndexedDbDatabase>(), It.IsAny<Type>()))
             .Returns((IndexedDbDatabase database, Type type) =>
             {
-                if (type == typeof(Exception))
+                if (type == typeof(object))
                 {
-                    return new ObjectStore<Exception>(database, new Mock<ITransactionProvider<Exception>>().Object);
+                    return new ObjectStore<object>(database, new Mock<ITransactionProvider<object>>().Object);
                 }
                 return new ObjectStore<string>(database, new Mock<ITransactionProvider<string>>().Object);
             });
@@ -59,7 +59,7 @@ public class IndexedDbContextTests
         
         // Assert
         mockTransactionProviderFactory.Verify(x => x.GetObjectStore(It.IsAny<IndexedDbDatabase>(), It.IsAny<Type>()), Times.Exactly(2));
-        Assert.NotNull(mockIndexedDbDatabase.Exceptions);
+        Assert.NotNull(mockIndexedDbDatabase.Objects);
         Assert.NotNull(mockIndexedDbDatabase.Strings);
     }
 

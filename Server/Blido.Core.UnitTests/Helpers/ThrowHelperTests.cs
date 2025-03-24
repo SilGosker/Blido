@@ -1,6 +1,11 @@
 ﻿using System.Collections.Frozen;
 using System.Linq.Expressions;
 using System.Reflection;
+using Blido.Core.Transaction;
+using Blido.Core.Transaction.JsExpression;
+using Blido.Core.Transaction.Mutation.KeyGeneration.KeyGenerators;
+using Microsoft.JSInterop;
+using Moq;
 
 namespace Blido.Core.Helpers;
 
@@ -128,5 +133,34 @@ public class ThrowHelperTests
         // Assert
         var exception = Assert.Throws<InvalidOperationException>(act);
         Assert.Equal("Cannot add custom translator after configuration.", exception.Message);
+    }
+
+    [Fact]
+    public void ThrowTypeNotInObjectStores_WhenTypeIsNotInObjectStoreProperties_ShouldThrowInvalidOperationException()
+    {
+        // Arrange
+        var entityType = typeof(ThrowHelper);
+        var context = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, new Mock<IJSRuntime>().Object));
+
+        // Act
+        Action act = () => ThrowHelper.ThrowTypeNotInObjectStores(entityType, context);
+        
+        // Assert
+        var exception = Assert.Throws<InvalidOperationException>(act);
+        Assert.Equal($"The entity of type Blido.Core.Helpers.ThrowHelper is not present in any of the objectstores in context Blido.Core.MockIndexedDbDatabase", exception.Message);
+    }
+
+    [Fact]
+    public void ThrowTypeNotInObjectStores_WhenTypeIsInObjectStoreProperties_ShouldNotThrowException()
+    {
+        // Arrange
+        var entityType = typeof(EntityWithGuidKey);
+        var context = new MockIndexedDbDatabaseWithPrimaryKeySetProperties(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, new Mock<IJSRuntime>().Object));
+        
+        // Act
+        Action act = () => ThrowHelper.ThrowTypeNotInObjectStores(entityType, context);
+        
+        // Assert
+        act();
     }
 }

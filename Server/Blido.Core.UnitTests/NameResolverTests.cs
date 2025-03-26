@@ -5,6 +5,33 @@ public class NameResolverTests
     [Fact]
     public void ResolveObjectStoreName_ShouldReturnName()
     {
+        // Arrange
+        var type = typeof(MockObjectStore);
+
+        // Act
+        var actual = NameResolver.ResolveObjectStoreName(type);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal("MockObjectStore", actual);
+    }
+
+    [Fact]
+    public void ResolveObjectStoreName_WhenTypeHasObjectStoreNameAttribute_ShouldOverride()
+    {
+        // Arrange
+        var type = typeof(MockObjectStoreWithAttribute);
+
+        // Act
+        var actual = NameResolver.ResolveObjectStoreName(type);
+        
+        // Assert
+        Assert.Equal("CustomName", actual);
+    }
+
+    [Fact]
+    public void ResolveObjectStoreName_WithGenericType_ShouldReturnName()
+    {
         // Arrange & Act 
         var actual = NameResolver.ResolveObjectStoreName<MockObjectStore>();
 
@@ -13,7 +40,7 @@ public class NameResolverTests
     }
 
     [Fact]
-    public void ResolveObjectStoreName_WhenTypeHasObjectStoreNameAttribute_ShouldOverride()
+    public void ResolveObjectStoreName_WithGenericType_WhenTypeHasObjectStoreNameAttribute_ShouldOverride()
     {
         // Arrange & Act 
         var actual = NameResolver.ResolveObjectStoreName<MockObjectStoreWithAttribute>();

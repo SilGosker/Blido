@@ -7,7 +7,11 @@ public static class NameResolver
 {
     public static string ResolveObjectStoreName<TEntity>() where TEntity : class
     {
-        var type = typeof(TEntity);
+        return ResolveObjectStoreName(typeof(TEntity));
+    }
+
+    public static string ResolveObjectStoreName(Type type)
+    {
         var attribute = type.GetCustomAttribute<ObjectStoreNameAttribute>();
 
         if (attribute is not null)

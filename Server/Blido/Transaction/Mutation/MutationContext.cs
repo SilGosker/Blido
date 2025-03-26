@@ -1,4 +1,4 @@
-using Blido.Core.Helpers;
+﻿using Blido.Core.Helpers;
 using Blido.Core.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,6 +12,7 @@ public class MutationContext: IAsyncDisposable
     private readonly List<MutationEntityContext> _entities = new();
     private int _index = -1;
     private readonly IndexedDbContext _context;
+    public IndexedDbDatabase Database { get; }
     public MutationContext(IOptions<MutationConfiguration> mutationConfiguration, IServiceScope serviceScope, IndexedDbContext context)
     {
         ArgumentNullException.ThrowIfNull(mutationConfiguration);
@@ -20,6 +21,7 @@ public class MutationContext: IAsyncDisposable
         _mutationConfiguration = mutationConfiguration.Value;
         _serviceScope = serviceScope;
         _context = context;
+        Database = context.Database;
     }
 
     public IReadOnlyList<MutationEntityContext> Entities => _entities.AsReadOnly();

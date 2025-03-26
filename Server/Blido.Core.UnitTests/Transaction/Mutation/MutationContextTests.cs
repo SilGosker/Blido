@@ -78,6 +78,23 @@ public class MutationContextTests
     }
 
     [Fact]
+    public void Constructor_SetsDatabaseProperty()
+    {
+        // Arrange
+        var serviceScope = new Mock<IServiceScope>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var database = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object,
+            new Mock<IJSRuntime>().Object));
+
+        // Act
+        var context = new MutationContext(options, serviceScope, database);
+
+        // Assert
+        Assert.NotNull(context.Database);
+        Assert.Same(database, context.Database);
+    }
+
+    [Fact]
     public void Insert_AddsMutationEntityContext_ToEntities()
     {
         // Arrange

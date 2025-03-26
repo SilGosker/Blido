@@ -1,4 +1,4 @@
-﻿using Blido.Core.Helpers;
+using Blido.Core.Helpers;
 using Blido.Core.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -25,6 +25,11 @@ public class MutationContext: IAsyncDisposable
     public IReadOnlyList<MutationEntityContext> Entities => _entities.AsReadOnly();
     public async ValueTask SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        if (Entities.Count == 0)
+        {
+            return;
+        }
+
         _index++;
         if (_index < _mutationConfiguration.MiddlewareTypes.Count)
         {

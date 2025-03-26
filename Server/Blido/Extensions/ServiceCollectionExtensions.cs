@@ -1,4 +1,5 @@
-﻿using Blido.Core.Transaction;
+﻿using Blido.Core.Options;
+using Blido.Core.Transaction;
 using Blido.Core.Transaction.JsExpression;
 using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
@@ -12,7 +13,8 @@ namespace Blido.Core.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection RegisterIndexedDbDatabase<TDatabase>(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterIndexedDbDatabase<TDatabase>(this IServiceCollection serviceCollection,
+        Action<BlidoConfiguration>? configure = null)
         where TDatabase : IndexedDbContext
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
@@ -28,6 +30,17 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IExpressionBuilder, JsExpressionBuilder>();
         serviceCollection.AddScoped<IObjectStoreFactory, ObjectStoreFactory>();
 
+        serviceCollection.ConfigureBlido(configure);
+
         return serviceCollection;
+    }
+
+    internal static void ConfigureBlido(this IServiceCollection serviceCollection, Action<BlidoConfiguration>? configure)
+    {
+        var blidoConfiguration = new BlidoConfiguration();
+        configure?.Invoke(blidoConfiguration);
+
+        serviceCollection.Configure<BlidoConfiguration>(options => configure?.Invoke(options));
+        serviceCollection.Configure(blidoConfiguration.MutationPipelineConfiguration);
     }
 }

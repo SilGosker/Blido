@@ -1,4 +1,5 @@
-﻿using Blido.Core.Transaction;
+﻿using Blido.Core.Options;
+using Blido.Core.Transaction;
 using Blido.Core.Transaction.JsExpression;
 using Blido.Core.Transaction.JsExpression.BinaryTranslation;
 using Blido.Core.Transaction.JsExpression.MemberTranslation;
@@ -7,6 +8,7 @@ using Blido.Core.Transaction.JsExpression.UnaryTranslation;
 using Blido.Core.Transaction.Mutation;
 using Blido.Core.Transaction.Mutation.KeyGeneration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -196,6 +198,7 @@ public class ServiceCollectionExtensionsTests
         // Arrange
         var serviceCollection = new ServiceCollection();
         var mockJsRuntime = new Mock<IJSRuntime>().Object;
+
         // Act
         serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
         serviceCollection.RegisterIndexedDbDatabase<MockIndexedDbDatabase>();
@@ -205,5 +208,62 @@ public class ServiceCollectionExtensionsTests
         var transactionProviderFactory = serviceProvider.GetRequiredService<IObjectStoreFactory>();
         Assert.NotNull(transactionProviderFactory);
         Assert.IsType<ObjectStoreFactory>(transactionProviderFactory);
+    }
+
+    [Fact]
+    public void ConfigureBlido_RegistersBlidoConfigurationOptions()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+
+        // Act
+        serviceCollection.ConfigureBlido(_ => { });
+
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var options = serviceProvider.GetRequiredService<IOptions<BlidoConfiguration>>();
+        Assert.NotNull(options);
+    }
+
+    [Fact]
+    public void ConfigureBlido_RegistersMutationConfigurationOptions()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+
+        // Act
+        serviceCollection.ConfigureBlido(_ => { });
+        
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var mutationConfiguration = serviceProvider.GetRequiredService<IOptions<MutationConfiguration>>();
+        Assert.NotNull(mutationConfiguration);
+    }
+
+    [Fact]
+    public void Configure_WhenConfigureIsNotNull_UsesToConfigureBlidoConfiguration()
+    {
+        // Arrange
+        var serviceCollection = new ServiceCollection();
+        var mockJsRuntime = new Mock<IJSRuntime>().Object;
+        serviceCollection.AddScoped<IJSRuntime>(_ => mockJsRuntime);
+        bool configureCalled = false;
+
+        // Act
+        serviceCollection.ConfigureBlido(options =>
+        {
+            configureCalled = true;
+            options.ConfigureMutationPipeline(_ => { });
+        });
+        
+        // Assert
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var mutationConfiguration = serviceProvider.GetRequiredService<IOptions<MutationConfiguration>>();
+        Assert.True(configureCalled);
+        Assert.Empty(mutationConfiguration.Value.MiddlewareTypes);
     }
 }

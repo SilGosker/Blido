@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blido.Core.Helpers;
 
-public class ThrowHelper
+internal class ThrowHelper
 {
     public static void ThrowUnsupportedException(MethodInfo methodInfo)
     {
@@ -83,6 +83,14 @@ public class ThrowHelper
         if (!context.ObjectStoreTypes.Contains(entityType))
         {
             throw new InvalidOperationException($"The entity of type {entityType} is not present in any of the objectstores in context {context.GetType()}");
+        }
+    }
+
+    public static void ThrowIfNotAssignableTo<TAssignable>(Type type)
+    {
+        if (!typeof(TAssignable).IsAssignableFrom(type))
+        {
+            throw new InvalidOperationException($"The type '{type}' is not assignable to type '{typeof(TAssignable)}'");
         }
     }
 }

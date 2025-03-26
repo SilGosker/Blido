@@ -30,7 +30,7 @@ public class MutationEntityContext
         PrimaryKeys = KeyedPropertyHelper.GetKeys(entity.GetType()).ToArray();
     }
 
-    public object BeforeChange { get; private set; }
+    public object BeforeChange { get; }
     public object? AfterChange { get; internal set; }
     public MutationState State { get; }
     internal string StateMethodName => State switch

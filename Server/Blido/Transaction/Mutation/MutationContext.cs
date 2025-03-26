@@ -1,21 +1,23 @@
 ﻿using Blido.Core.Helpers;
+using Blido.Core.Options;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Blido.Core.Transaction.Mutation;
 
 public class MutationContext: IAsyncDisposable
 {
-    private readonly List<Type> _pipelineTypes;
+    private readonly MutationConfiguration _mutationConfiguration;
     private readonly IServiceScope _serviceScope;
     private readonly List<MutationEntityContext> _entities = new();
     private int _index = -1;
     private readonly IndexedDbContext _context;
-    public MutationContext(List<Type> pipelineTypes, IServiceScope serviceScope, IndexedDbContext context)
+    public MutationContext(IOptions<MutationConfiguration> mutationConfiguration, IServiceScope serviceScope, IndexedDbContext context)
     {
-        ArgumentNullException.ThrowIfNull(pipelineTypes);
+        ArgumentNullException.ThrowIfNull(mutationConfiguration);
         ArgumentNullException.ThrowIfNull(serviceScope);
         ArgumentNullException.ThrowIfNull(context);
-        _pipelineTypes = pipelineTypes;
+        _mutationConfiguration = mutationConfiguration.Value;
         _serviceScope = serviceScope;
         _context = context;
     }
@@ -24,13 +26,11 @@ public class MutationContext: IAsyncDisposable
     public async ValueTask SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         _index++;
-        if (_index < _pipelineTypes.Count)
+        if (_index < _mutationConfiguration.MiddlewareTypes.Count)
         {
-            var middlewareType = _pipelineTypes[_index];
-            var middleware = (IBlidoMiddleware?)_serviceScope.ServiceProvider.GetService(middlewareType)
-                             ?? (IBlidoMiddleware)ActivatorUtilities.CreateInstance(_serviceScope.ServiceProvider, middlewareType);
-
-            await middleware.ExecuteAsync(this, () => SaveChangesAsync(cancellationToken), cancellationToken);
+            var middlewareType = _mutationConfiguration.MiddlewareTypes[_index];
+            await middlewareType.InvokeAsync(_serviceScope, this, () => SaveChangesAsync(cancellationToken),
+                cancellationToken);
         }
     }
 

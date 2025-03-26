@@ -163,4 +163,28 @@ public class ThrowHelperTests
         // Assert
         act();
     }
+
+    [Fact]
+    public void ThrowIfNotAssignableTo_WhenTypeIsAssignableFromGeneric_DoesNotThrow()
+    {
+        // Arrange
+        var type = typeof(List<int>);
+
+        // Act
+        ThrowHelper.ThrowIfNotAssignableTo<ICollection<int>>(type);
+    }
+
+    [Fact]
+    public void ThrowIfNotAssignableTo_WhenTypeIsNotAssignableFromGeneric_ShouldThrowNotSupportedException()
+    {
+        // Arrange
+        var type = typeof(EntityWithGuidKey);
+
+        // Act
+        Action act = () => ThrowHelper.ThrowIfNotAssignableTo<EntityWithNumberKey>(type);
+
+        // Assert
+        var exception = Assert.Throws<InvalidOperationException>(act);
+        Assert.Equal("The type 'Blido.Core.Transaction.Mutation.KeyGeneration.KeyGenerators.EntityWithGuidKey' is not assignable to type 'Blido.Core.Transaction.Mutation.KeyGeneration.KeyGenerators.EntityWithNumberKey'", exception.Message);
+    }
 }

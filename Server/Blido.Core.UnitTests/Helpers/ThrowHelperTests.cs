@@ -140,7 +140,9 @@ public class ThrowHelperTests
     {
         // Arrange
         var entityType = typeof(ThrowHelper);
-        var context = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, new Mock<IJSRuntime>().Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(new Mock<IJSRuntime>().Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
 
         // Act
         Action act = () => ThrowHelper.ThrowTypeNotInObjectStores(entityType, context);
@@ -155,7 +157,9 @@ public class ThrowHelperTests
     {
         // Arrange
         var entityType = typeof(EntityWithGuidKey);
-        var context = new MockIndexedDbDatabaseWithPrimaryKeySetProperties(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, new Mock<IJSRuntime>().Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(new Mock<IJSRuntime>().Object);
+        var context = new MockIndexedDbDatabaseWithPrimaryKeySetProperties(mockObjectStoreFactory.Object);
         
         // Act
         Action act = () => ThrowHelper.ThrowTypeNotInObjectStores(entityType, context);

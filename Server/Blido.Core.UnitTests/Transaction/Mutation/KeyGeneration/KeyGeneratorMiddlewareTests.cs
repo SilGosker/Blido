@@ -31,10 +31,11 @@ public class KeyGeneratorMiddlewareTests
         // Arrange
         var keyGeneratorFactory = new KeyGeneratorFactory();
         var jsRuntime = new Mock<IJSRuntime>();
-        var serviceScope = new Mock<IServiceScope>().Object;
-        var objectStoreFactory = new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, jsRuntime.Object);
-        var dbContext = new MockIndexedDbDatabaseWithPrimaryKeySetProperties(objectStoreFactory);
-        var context = new MutationContext(new OptionsWrapper<MutationConfiguration>(new MutationConfiguration()), serviceScope, dbContext);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var objectStoreFactory = new Mock<IObjectStoreFactory>();
+        objectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntime.Object);
+        var dbContext = new MockIndexedDbDatabaseWithPrimaryKeySetProperties(objectStoreFactory.Object);
+        var context = new MutationContext(new OptionsWrapper<MutationConfiguration>(new MutationConfiguration()), serviceProvider, dbContext);
 
         var updatedEntityId = Guid.NewGuid();
         var newEntity = new EntityWithGuidKey();

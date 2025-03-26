@@ -8,18 +8,18 @@ namespace Blido.Core.Transaction.Mutation;
 public class MutationContext: IAsyncDisposable
 {
     private readonly MutationConfiguration _mutationConfiguration;
-    private readonly IServiceScope _serviceScope;
+    private readonly IServiceProvider _serviceProvider;
     private readonly List<MutationEntityContext> _entities = new();
     private int _index = -1;
     private readonly IndexedDbContext _context;
     public IndexedDbDatabase Database { get; }
-    public MutationContext(IOptions<MutationConfiguration> mutationConfiguration, IServiceScope serviceScope, IndexedDbContext context)
+    public MutationContext(IOptions<MutationConfiguration> mutationConfiguration, IServiceProvider serviceProvider, IndexedDbContext context)
     {
         ArgumentNullException.ThrowIfNull(mutationConfiguration);
-        ArgumentNullException.ThrowIfNull(serviceScope);
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(context);
         _mutationConfiguration = mutationConfiguration.Value;
-        _serviceScope = serviceScope;
+        _serviceProvider = serviceProvider;
         _context = context;
         Database = context.Database;
     }
@@ -36,7 +36,7 @@ public class MutationContext: IAsyncDisposable
         if (_index < _mutationConfiguration.MiddlewareTypes.Count)
         {
             var middlewareType = _mutationConfiguration.MiddlewareTypes[_index];
-            await middlewareType.InvokeAsync(_serviceScope, this, () => SaveChangesAsync(cancellationToken),
+            await middlewareType.InvokeAsync(_serviceProvider, this, () => SaveChangesAsync(cancellationToken),
                 cancellationToken);
         }
     }

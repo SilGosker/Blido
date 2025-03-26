@@ -1,9 +1,11 @@
+﻿using Blido.Core.Transaction.Configuration;
 using System.Linq.Expressions;
 using System.Numerics;
 
 namespace Blido.Core.Transaction;
 
-public interface IObjectStore<TEntity> where TEntity : class
+public interface IObjectStore<TEntity>
+    : ITransactionFilterProvider<TEntity, IObjectStore<TEntity>> where TEntity : class
 {
     public ValueTask<List<TEntity>> ToListAsync(CancellationToken cancellationToken = default);
     public ValueTask<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);

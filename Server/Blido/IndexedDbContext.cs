@@ -23,7 +23,7 @@ public abstract class IndexedDbContext
 
     public object ObjectStore(Type type)
     {
-        return _transactionProviderFactory.GetObjectStore(Database, type);
+        return _transactionProviderFactory.GetObjectStore(this, type);
     }
 
     private void InitializeProperties()

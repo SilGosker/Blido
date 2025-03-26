@@ -1,4 +1,7 @@
-﻿using Blido.Core.Transaction.JsExpression;
+﻿using Blido.Core.Options;
+using Blido.Core.Transaction.JsExpression;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -103,10 +106,10 @@ public class QueryProviderTests
         jsRuntime.Setup(x => x.InvokeAsync<bool>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(true);
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var context = new MockIndexedDbDatabase(objectStoreFactory.Object);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
-        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(context, queryProvider, new Mock<IServiceProvider>().Object, new OptionsWrapper<MutationConfiguration>(new MutationConfiguration())));
 
         // Act
         var result = await queryProvider.ExecuteAsync<bool>("AnyAsync");
@@ -178,10 +181,12 @@ public class QueryProviderTests
         jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var context = new MockIndexedDbDatabase(objectStoreFactory.Object);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
-        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(context, queryProvider, serviceProvider, options));
 
         // Act
         var result = await queryProvider.ExecuteAsync<object>("SumAsync", selector: _ => 1, CancellationToken.None);
@@ -253,11 +258,13 @@ public class QueryProviderTests
         jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var context = new MockIndexedDbDatabase(objectStoreFactory.Object);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
-        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
-        
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(context, queryProvider, serviceProvider, options));
+
         // Act
         var result = await queryProvider.ExecuteAsync<object>("FindAsync", new object(), CancellationToken.None);
         
@@ -310,10 +317,12 @@ public class QueryProviderTests
         jsRuntime.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>())).ReturnsAsync(1ul);
         var objectStoreFactory = new Mock<IObjectStoreFactory>();
         objectStoreFactory.Setup(x => x.JsRuntime).Returns(jsRuntime.Object);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(objectStoreFactory.Object), jsRuntime.Object);
+        var context = new MockIndexedDbDatabase(objectStoreFactory.Object);
         var jsExpressionBuilder = new Mock<IExpressionBuilder>().Object;
         var queryProvider = new QueryProvider<object>(jsRuntime.Object, jsExpressionBuilder);
-        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(database, queryProvider));
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        ((IQueryProvider)queryProvider).SetObjectStore(new ObjectStore<object>(context, queryProvider, serviceProvider, options));
 
         // Act
         await queryProvider.ExecuteAsync("CountAsync", CancellationToken.None);

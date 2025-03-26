@@ -28,22 +28,22 @@ public class MutationMiddlewareItem
     public object[] Arguments { get; }
     public Func<IServiceProvider, IBlidoMiddleware>? CreateInstance { get; }
 
-    public async ValueTask InvokeAsync(IServiceScope scope,
+    public async ValueTask InvokeAsync(IServiceProvider serviceProvider,
         MutationContext context,
         ProcessNextDelegate processNext,
         CancellationToken cancellationToken)
     {
         if (Type != null)
         {
-            var middleware = (IBlidoMiddleware?)scope.ServiceProvider.GetService(Type)
-                             ?? (IBlidoMiddleware)ActivatorUtilities.CreateInstance(scope.ServiceProvider, Type, Arguments);
+            var middleware = (IBlidoMiddleware?)serviceProvider.GetService(Type)
+                             ?? (IBlidoMiddleware)ActivatorUtilities.CreateInstance(serviceProvider, Type, Arguments);
             await middleware.ExecuteAsync(context, processNext, cancellationToken);
             return;
         }
         
         if (CreateInstance != null)
         {
-            var middleware = CreateInstance(scope.ServiceProvider);
+            var middleware = CreateInstance(serviceProvider);
             ArgumentNullException.ThrowIfNull(middleware);
             await middleware.ExecuteAsync(context, processNext, cancellationToken);
             return;

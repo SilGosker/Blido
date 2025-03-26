@@ -78,11 +78,11 @@ public class MutationMiddlewareItemTests
     {
         // Arrange
         var serviceProvider = new Mock<IServiceProvider>();
-        var scope = new Mock<IServiceScope>();
-        scope.SetupGet(x => x.ServiceProvider).Returns(serviceProvider.Object);
         var config = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
-        var dbContext = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, new Mock<IJSRuntime>().Object));
-        MutationContext context = new(config, scope.Object, dbContext);
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(new Mock<IJSRuntime>().Object);
+        var dbContext = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        MutationContext context = new(config, serviceProvider.Object, dbContext);
         ProcessNextDelegate processNext = () => ValueTask.CompletedTask;
         int invoked = 0;
         var mutationMiddlewareItem = new MutationMiddlewareItem(_ =>
@@ -92,7 +92,7 @@ public class MutationMiddlewareItemTests
         });
 
         // Act
-        await mutationMiddlewareItem.InvokeAsync(scope.Object, context, processNext, CancellationToken.None);
+        await mutationMiddlewareItem.InvokeAsync(serviceProvider.Object, context, processNext, CancellationToken.None);
 
         // Assert
         Assert.Equal(1, invoked);
@@ -102,19 +102,21 @@ public class MutationMiddlewareItemTests
     public async Task InvokeAsync_WhenTypeIsNotNull_ShouldCreateInstanceAndInvokeExecuteAsync()
     {
         // Arrange
-        var serviceProvider = new Mock<IServiceProvider>();
         var middleware = new Mock<IBlidoMiddleware>();
+
+        var serviceProvider = new Mock<IServiceProvider>();
         serviceProvider.Setup(x => x.GetService(It.IsAny<Type>())).Returns(middleware.Object);
-        var scope = new Mock<IServiceScope>();
-        scope.SetupGet(x => x.ServiceProvider).Returns(serviceProvider.Object);
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(new Mock<IJSRuntime>().Object);
+        var dbContext = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        
         var config = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
-        var dbContext = new MockIndexedDbDatabase(new ObjectStoreFactory(new Mock<IExpressionBuilder>().Object, new Mock<IJSRuntime>().Object));
-        MutationContext context = new(config, scope.Object, dbContext);
+        MutationContext context = new(config, serviceProvider.Object, dbContext);
         ProcessNextDelegate processNext = () => ValueTask.CompletedTask;
         var mutationMiddlewareItem = new MutationMiddlewareItem(typeof(MockBlidoMiddleware));
 
         // Act
-        await mutationMiddlewareItem.InvokeAsync(scope.Object, context, processNext, CancellationToken.None);
+        await mutationMiddlewareItem.InvokeAsync(serviceProvider.Object, context, processNext, CancellationToken.None);
         
         // Assert
         middleware.Verify(x => x.ExecuteAsync(It.IsAny<MutationContext>(), It.IsAny<ProcessNextDelegate>(), It.IsAny<CancellationToken>()), Times.Once);

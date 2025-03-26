@@ -1,5 +1,8 @@
-﻿using Blido.Core.Transaction;
+﻿using Blido.Core.Options;
+using Blido.Core.Transaction;
 using Blido.Core.Transaction.JsExpression;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -42,14 +45,14 @@ public class IndexedDbContextTests
     {
         // Arrange
         var mockTransactionProviderFactory = new Mock<IObjectStoreFactory>();
-        mockTransactionProviderFactory.Setup(x => x.GetObjectStore(It.IsAny<IndexedDbDatabase>(), It.IsAny<Type>()))
-            .Returns((IndexedDbDatabase database, Type type) =>
+        mockTransactionProviderFactory.Setup(x => x.GetObjectStore(It.IsAny<IndexedDbContext>(), It.IsAny<Type>()))
+            .Returns((IndexedDbContext database, Type type) =>
             {
                 if (type == typeof(object))
                 {
-                    return new ObjectStore<object>(database, new Mock<ITransactionProvider<object>>().Object);
+                    return new ObjectStore<object>(database, new Mock<ITransactionProvider<object>>().Object, new Mock<IServiceProvider>().Object, new OptionsWrapper<MutationConfiguration>(new MutationConfiguration()));
                 }
-                return new ObjectStore<string>(database, new Mock<ITransactionProvider<string>>().Object);
+                return new ObjectStore<string>(database, new Mock<ITransactionProvider<string>>().Object, new Mock<IServiceProvider>().Object, new OptionsWrapper<MutationConfiguration>(new MutationConfiguration()));
             });
         var mockJsRuntime = new Mock<IJSRuntime>();
         mockTransactionProviderFactory.SetupGet(x => x.JsRuntime).Returns(mockJsRuntime.Object);
@@ -58,7 +61,7 @@ public class IndexedDbContextTests
         var mockIndexedDbDatabase = new MockIndexedDbDatabaseWithObjectStoreSetProperties(mockTransactionProviderFactory.Object);
         
         // Assert
-        mockTransactionProviderFactory.Verify(x => x.GetObjectStore(It.IsAny<IndexedDbDatabase>(), It.IsAny<Type>()), Times.Exactly(2));
+        mockTransactionProviderFactory.Verify(x => x.GetObjectStore(It.IsAny<IndexedDbContext>(), It.IsAny<Type>()), Times.Exactly(2));
         Assert.NotNull(mockIndexedDbDatabase.Objects);
         Assert.NotNull(mockIndexedDbDatabase.Strings);
     }

@@ -1,7 +1,10 @@
 ﻿using System.Linq.Expressions;
 using System.Text.Json;
+using Blido.Core.Options;
 using Blido.Core.Transaction.Configuration;
 using Blido.Core.Transaction.JsExpression;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -15,11 +18,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -45,11 +49,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         TransactionConditions<object> conditions = null!;
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -73,11 +78,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         string methodName = null!;
         var cancellationToken = CancellationToken.None;
@@ -101,11 +107,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -132,11 +139,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         var cancellationToken = CancellationToken.None; 
         
@@ -159,11 +167,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;
@@ -195,11 +204,12 @@ public class SelectorMaterializerTests
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         conditions.AddCondition(x => true);
         conditions.AddCondition(x => false);
@@ -235,11 +245,12 @@ public class SelectorMaterializerTests
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var expressionBuilder = new Mock<IExpressionBuilder>();
         expressionBuilder.Setup(x => x.ProcessExpression(It.IsAny<LambdaExpression>())).Returns("x=>x");
-        var database =
-            new IndexedDbDatabase(
-                new MockIndexedDbDatabase(new ObjectStoreFactory(expressionBuilder.Object, jsRuntimeMock.Object)),
-                jsRuntimeMock.Object);
-        var objectStore = new ObjectStore<object>(database, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object));
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabase(mockObjectStoreFactory.Object);
+        var serviceProvider = new Mock<IServiceProvider>().Object;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var objectStore = new ObjectStore<object>(context, new QueryProvider<object>(jsRuntimeMock.Object, expressionBuilder.Object), serviceProvider, options);
         var conditions = new TransactionConditions<object>();
         var methodName = "methodName";
         var cancellationToken = CancellationToken.None;

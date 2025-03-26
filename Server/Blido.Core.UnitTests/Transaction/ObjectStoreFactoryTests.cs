@@ -1,4 +1,7 @@
-﻿using Blido.Core.Transaction.JsExpression;
+﻿using Blido.Core.Options;
+using Blido.Core.Transaction.JsExpression;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Moq;
 
@@ -12,9 +15,11 @@ public class ObjectStoreFactoryTests
         // Arrange
         IExpressionBuilder expressionBuilder = null!;
         var jsRuntime = new Mock<IJSRuntime>().Object;
-     
+        var serviceProvider = new Mock<IServiceProvider>();
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        
         // Act
-        var action = () => new ObjectStoreFactory(expressionBuilder, jsRuntime);
+        var action = () => new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider.Object, options);
         
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(action);
@@ -27,13 +32,49 @@ public class ObjectStoreFactoryTests
         // Arrange
         var expressionBuilder = new Mock<IExpressionBuilder>().Object;
         IJSRuntime jsRuntime = null!;
+        var serviceProvider = new Mock<IServiceProvider>();
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
 
         // Act
-        var action = () => new ObjectStoreFactory(expressionBuilder, jsRuntime);
+        var action = () => new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider.Object, options);
 
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(action);
         Assert.Equal("jsRuntime", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_WhenServiceProviderIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var expressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        IServiceProvider serviceProvider = null!;
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+
+        // Act
+        var action = () => new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider, options);
+        
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(action);
+        Assert.Equal("serviceProvider", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_WhenOptionsIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var expressionBuilder = new Mock<IExpressionBuilder>().Object;
+        var jsRuntime = new Mock<IJSRuntime>().Object;
+        var serviceProvider = new Mock<IServiceProvider>();
+        IOptions<MutationConfiguration> options = null!;
+
+        // Act
+        var action = () => new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider.Object, options);
+        
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(action);
+        Assert.Equal("options", exception.ParamName);
     }
 
     [Fact]
@@ -42,8 +83,10 @@ public class ObjectStoreFactoryTests
         // Arrange
         var expressionBuilder = new Mock<IExpressionBuilder>().Object;
         var jsRuntime = new Mock<IJSRuntime>().Object;
-        var factory = new ObjectStoreFactory(expressionBuilder, jsRuntime);
-        IndexedDbDatabase database = null!;
+        var serviceProvider = new Mock<IServiceProvider>();
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var factory = new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider.Object, options);
+        IndexedDbContext database = null!;
         var entityType = typeof(object);
 
         // Act
@@ -51,7 +94,7 @@ public class ObjectStoreFactoryTests
         
         // Assert
         var exception = Assert.Throws<ArgumentNullException>(action);
-        Assert.Equal("database", exception.ParamName);
+        Assert.Equal("context", exception.ParamName);
     }
 
     [Fact]
@@ -60,8 +103,10 @@ public class ObjectStoreFactoryTests
         // Arrange
         var expressionBuilder = new Mock<IExpressionBuilder>().Object;
         var jsRuntime = new Mock<IJSRuntime>().Object;
-        var factory = new ObjectStoreFactory(expressionBuilder, jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(factory), jsRuntime);
+        var serviceProvider = new Mock<IServiceProvider>();
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var factory = new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider.Object, options);
+        var database = new MockIndexedDbDatabase(factory);
         Type entityType = null!;
         
         // Act
@@ -78,8 +123,10 @@ public class ObjectStoreFactoryTests
         // Arrange
         var expressionBuilder = new Mock<IExpressionBuilder>().Object;
         var jsRuntime = new Mock<IJSRuntime>().Object;
-        var factory = new ObjectStoreFactory(expressionBuilder, jsRuntime);
-        var database = new IndexedDbDatabase(new MockIndexedDbDatabase(factory), jsRuntime);
+        var serviceProvider = new Mock<IServiceProvider>();
+        var options = new OptionsWrapper<MutationConfiguration>(new MutationConfiguration());
+        var factory = new ObjectStoreFactory(expressionBuilder, jsRuntime, serviceProvider.Object, options);
+        var database = new MockIndexedDbDatabase(factory);
         var entityType = typeof(object);
      
         // Act

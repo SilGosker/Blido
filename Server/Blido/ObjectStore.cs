@@ -1,28 +1,37 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Numerics;
+using Blido.Core.Options;
 using Blido.Core.Transaction;
-using Blido.Core.Transaction.Configuration;
+using Blido.Core.Transaction.Mutation;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Blido.Core;
 
 public class ObjectStore<TEntity> :
-    ITransactionFilterProvider<TEntity, ObjectStore<TEntity>>,
-    IObjectStore<TEntity> where TEntity : class
+    IObjectStore<TEntity>,
+    IMutableObjectStore<TEntity> where TEntity : class
 {
     private readonly ITransactionProvider<TEntity> _provider;
     public string Name { get; }
-    public IndexedDbDatabase Database { get; }
-
-    public ObjectStore(IndexedDbDatabase database, ITransactionProvider<TEntity> provider)
+    internal IndexedDbContext Context { get; }
+    public IndexedDbDatabase Database => Context.Database;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IOptions<MutationConfiguration> _configurationOptions;
+    public ObjectStore(IndexedDbContext context, ITransactionProvider<TEntity> provider, IServiceProvider serviceProvider, IOptions<MutationConfiguration> options)
     {
         ArgumentNullException.ThrowIfNull(provider);
-        ArgumentNullException.ThrowIfNull(database);
-        Database = database;
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+        ArgumentNullException.ThrowIfNull(options);
+        Context = context;
         _provider = provider;
+        _serviceProvider = serviceProvider;
+        _configurationOptions = options;
         Name = NameResolver.ResolveObjectStoreName<TEntity>();
     }
 
-    public ObjectStore<TEntity> Where(Expression<Func<TEntity, bool>> expression)
+    public IObjectStore<TEntity> Where(Expression<Func<TEntity, bool>> expression)
     {
         ArgumentNullException.ThrowIfNull(expression);
         _provider.Where(expression);
@@ -207,5 +216,35 @@ public class ObjectStore<TEntity> :
         ArgumentNullException.ThrowIfNull(expression);
         Where(expression);
         return _provider.ExecuteAsync<TEntity[]>(nameof(ToArrayAsync), cancellationToken);
+    }
+
+    public async ValueTask InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        await using (var mutationContext = new MutationContext(_configurationOptions, _serviceProvider, Context))
+        {
+            mutationContext.Insert(entity);
+            await mutationContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async ValueTask UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        await using (var mutationContext = new MutationContext(_configurationOptions, _serviceProvider, Context))
+        {
+            mutationContext.Update(entity);
+            await mutationContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async ValueTask DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        await using (var mutationContext = new MutationContext(_configurationOptions, _serviceProvider, Context))
+        {
+            mutationContext.Delete(entity);
+            await mutationContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

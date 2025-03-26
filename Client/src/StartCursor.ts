@@ -9,10 +9,10 @@ export async function startCursor(database: string, currentVersion: number, obje
         .openCursor();
 }
 
-export async function startTransaction(database: string, currentVersion: number, objectStore: string) {
+export async function startTransaction(database: string, currentVersion: number, objectStore: string, readonly = true) {
     const db = await connectToDatabase(database, currentVersion);
 
     return db
-        .transaction(objectStore, 'readonly')
+        .transaction(objectStore, readonly ? 'readonly' : "readwrite")
         .objectStore(objectStore);
 }

@@ -1,9 +1,9 @@
-import {processArguments} from "../ProcessArguments";
+import {processQueryArguments} from "../ProcessQueryArguments";
 import {startCursor} from "../StartCursor";
 
 export function average(json: string) : Promise<number> {
     return new Promise(async (resolve, reject) => {
-        const args = processArguments(json);
+        const args = processQueryArguments(json);
 
         const request = await startCursor(args.databaseName, args.currentVersion, args.objectStoreName);
         let sum = 0;

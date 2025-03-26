@@ -1,9 +1,9 @@
-import {processArguments} from "../ProcessArguments";
+import {processQueryArguments} from "../ProcessQueryArguments";
 import {startCursor} from "../StartCursor";
 
 export function count(json: string) : Promise<number> {
     return new Promise(async (resolve, reject) => {
-        const args = processArguments(json);
+        const args = processQueryArguments(json);
 
         let count = 0;
         const request = await startCursor(args.databaseName, args.currentVersion, args.objectStoreName);

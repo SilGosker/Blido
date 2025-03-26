@@ -1,6 +1,12 @@
-export function processArguments(json: string): Arguments {
+export function processQueryArguments(json: string): QueryArguments {
     const parsed = JSON.parse(json) as
-        { parsedSelector: string, database: string, objectStore: string, version: number, parsedExpressions: string[] | undefined, identifiers: object };
+        { parsedSelector: string,
+            database: string,
+            objectStore: string,
+            version: number,
+            parsedExpressions: string[] | undefined,
+            identifiers: IDBValidKey | undefined
+        };
 
     let matches = (_: unknown) => true;
     const hasFilters = !!(parsed.parsedExpressions && parsed.parsedExpressions.length);
@@ -25,12 +31,12 @@ export function processArguments(json: string): Arguments {
     }
 }
 
-export interface Arguments {
+export interface QueryArguments {
     databaseName: string,
     objectStoreName: string,
     currentVersion: number,
     matches: (entity: unknown) => boolean;
     hasFilters: boolean
     selector: (entity: unknown) => number | unknown;
-    id: string | number | object | null;
+    id: IDBValidKey | undefined;
 }

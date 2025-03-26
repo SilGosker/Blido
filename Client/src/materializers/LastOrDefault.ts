@@ -1,9 +1,9 @@
-import {processArguments} from "../ProcessArguments";
+import {processQueryArguments} from "../ProcessQueryArguments";
 import {startCursor} from "../StartCursor";
 
 export function lastOrDefault(json: string) : Promise<unknown | null> {
     return new Promise(async (resolve, reject) => {
-        const args = processArguments(json);
+        const args = processQueryArguments(json);
         const request = await startCursor(args.databaseName, args.currentVersion, args.objectStoreName);
         let last: unknown | null = null;
 

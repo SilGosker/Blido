@@ -5,15 +5,12 @@ namespace Blido.Core.Transaction.Materialization;
 public class MaterializationArgumentsSerializationContextTests
 {
     [Fact]
-    public void MaterializationArgumentsSerializationContext_JsonSerializerContext()
+    public void DefaultMaterializationArguments_ShouldBeSourceGenerated()
     {
         // Arrange
-        var type = typeof(MaterializationArgumentsSerializationContext);
+        var options = MaterializationArgumentsSerializationContext.Default.MaterializationArguments;
         
-        // Act
-        bool isSubTypeOf = type.IsSubclassOf(typeof(JsonSerializerContext));
-
         // Assert
-        Assert.True(isSubTypeOf);
+        Assert.NotNull(options);
     }
 }

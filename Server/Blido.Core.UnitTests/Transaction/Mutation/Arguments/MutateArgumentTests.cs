@@ -87,4 +87,26 @@ public class MutateArgumentTests
         Assert.Equal("String", mutateArguments.ObjectStore);
         Assert.Equal(1ul, mutateArguments.Version);
     }
+
+    [Fact]
+    public async Task CreateAsync_WhenContextHasIndexedDbDatabaseName_GetsVersionAndNameFromContext()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        jsRuntimeMock.Setup(x => x.InvokeAsync<ulong>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(1ul);
+        var mockObjectStoreFactory = new Mock<IObjectStoreFactory>();
+        mockObjectStoreFactory.SetupGet(x => x.JsRuntime).Returns(jsRuntimeMock.Object);
+        var context = new MockIndexedDbDatabaseWithAttributeAndObjectStoreSetProperties(mockObjectStoreFactory.Object);
+        var mutationContext = new MutationContext(new OptionsWrapper<MutationConfiguration>(new MutationConfiguration()), new Mock<IServiceProvider>().Object, context);
+        mutationContext.Insert(new MockObjectStoreWithAttribute());
+
+        // Act
+        var mutateArguments = await MutateArguments.CreateAsync(mutationContext, CancellationToken.None);
+
+        // Assert
+        Assert.Equal("CustomName", mutateArguments.Database);
+        Assert.Equal("CustomName", mutateArguments.ObjectStore);
+        Assert.Equal(1ul, mutateArguments.Version);
+    }
 }

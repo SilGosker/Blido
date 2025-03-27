@@ -3,18 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace Blido.Core.Transaction.Mutation.Arguments;
 
-internal class MutateBatchArguments
+public class MutateBatchArguments
 {
     [JsonPropertyName("database")]
-    internal string Database { get; set; } = string.Empty;
+    public string Database { get; set; } = string.Empty;
 
     [JsonPropertyName("version")]
-    internal ulong Version { get; set; }
+    public ulong Version { get; set; }
 
     [JsonPropertyName("objectStores")]
-    internal List<MutateBatchObjectStoreArguments> ObjectStores { get; set; } = new();
+    public List<MutateBatchObjectStoreArguments> ObjectStores { get; set; } = new();
 
-    public static async Task<MutateBatchArguments> CreateAsync(MutationContext context, CancellationToken cancellationToken)
+    internal static async Task<MutateBatchArguments> CreateAsync(MutationContext context, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(context);
         MutateBatchArguments arguments = new()

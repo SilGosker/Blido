@@ -2,11 +2,15 @@
 
 namespace Blido.Core.Transaction.Mutation.Arguments;
 
-internal class MutateBatchEntityArguments
+public class MutateBatchEntityArguments
 {
+    internal MutateBatchEntityArguments()
+    {
+
+    }
     [JsonPropertyName("state")]
-    internal MutationState State { get; set; }
+    public MutationState State { get; set; }
 
     [JsonPropertyName("entity")]
-    internal string Entity { get; set; } = string.Empty;
+    public string Entity { get; set; } = string.Empty;
 }

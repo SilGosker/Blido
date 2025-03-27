@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Blido.Core.Transaction.Mutation.Arguments;
 
-internal class MutateArguments
+public class MutateArguments
 {
     private MutateArguments()
     {
@@ -22,14 +22,14 @@ internal class MutateArguments
     }
 
     [JsonPropertyName("database")]
-    internal string Database { get; set; } = string.Empty;
+    public string Database { get; set; } = string.Empty;
 
     [JsonPropertyName("version")]
-    internal ulong Version { get; set; }
+    public ulong Version { get; set; }
 
     [JsonPropertyName("objectStore")]
-    internal string ObjectStore { get; set; } = string.Empty;
+    public string ObjectStore { get; set; } = string.Empty;
 
     [JsonPropertyName("entity")]
-    internal string Entity { get; set; } = string.Empty;
+    public string Entity { get; set; } = string.Empty;
 }

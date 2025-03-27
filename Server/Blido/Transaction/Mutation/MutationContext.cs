@@ -41,21 +41,24 @@ public class MutationContext: IAsyncDisposable
         }
     }
 
-    public void Insert<TEntity>(TEntity entity) where TEntity : class
+    public void Insert(object entity)
     {
-        ThrowHelper.ThrowTypeNotInObjectStores(typeof(TEntity), _context);
+        ArgumentNullException.ThrowIfNull(entity);
+        ThrowHelper.ThrowTypeNotInObjectStores(entity.GetType(), _context);
         _entities.Add(MutationEntityContext.Insert(entity));
     }
 
-    public void Update<TEntity>(TEntity entity) where TEntity : class
+    public void Update(object entity)
     {
-        ThrowHelper.ThrowTypeNotInObjectStores(typeof(TEntity), _context);
+        ArgumentNullException.ThrowIfNull(entity);
+        ThrowHelper.ThrowTypeNotInObjectStores(entity.GetType(), _context);
         _entities.Add(MutationEntityContext.Update(entity));
     }
 
     public void Delete<TEntity>(TEntity entity) where TEntity : class
     {
-        ThrowHelper.ThrowTypeNotInObjectStores(typeof(TEntity), _context);
+        ArgumentNullException.ThrowIfNull(entity);
+        ThrowHelper.ThrowTypeNotInObjectStores(entity.GetType(), _context);
         _entities.Add(MutationEntityContext.Delete(entity));
     }
 

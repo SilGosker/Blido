@@ -1,18 +1,6 @@
-import {connectToDatabase} from "./ConnectToDatabase";
+import {startTransaction} from "./StartTransaction";
 
 export async function startCursor(database: string, currentVersion: number, objectStore: string) {
-    const db = await connectToDatabase(database, currentVersion);
-
-    return db
-        .transaction(objectStore, 'readonly')
-        .objectStore(objectStore)
-        .openCursor();
-}
-
-export async function startTransaction(database: string, currentVersion: number, objectStore: string, readonly = true) {
-    const db = await connectToDatabase(database, currentVersion);
-
-    return db
-        .transaction(objectStore, readonly ? 'readonly' : "readwrite")
-        .objectStore(objectStore);
+    const db = await startTransaction(database, currentVersion, objectStore);
+    return db.openCursor();
 }

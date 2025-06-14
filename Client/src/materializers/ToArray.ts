@@ -1,11 +1,12 @@
 import {processQueryArguments} from "../ProcessQueryArguments";
-import {startCursor, startTransaction} from "../StartCursor";
+import {startTransaction} from "../StartTransaction";
+import {startCursor} from "../StartCursor";
 
 export function toArray(json: string) : Promise<unknown[]> {
     return new Promise(async (resolve, reject) => {
         const args = processQueryArguments(json);
 
-        if (args.hasFilters) {
+        if (!args.hasFilters) {
             const transaction = await startTransaction(args.databaseName, args.currentVersion, args.objectStoreName);
             const request = transaction.getAll();
 

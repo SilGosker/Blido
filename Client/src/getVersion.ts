@@ -1,13 +1,6 @@
 import {connectToDatabase} from "./ConnectToDatabase";
 
-export interface GetVersionInterface {
-    (database: string) : Promise<number>;
-}
-
-export function getVersion(database : string): Promise<number> {
-    return new Promise(async (resolve) => {
-        const connection = await connectToDatabase(database);
-        resolve(connection.version)
-    });
-
+export async function getVersion(database: string): Promise<number> {
+    const connection = await connectToDatabase(database);
+    return connection.version;
 }

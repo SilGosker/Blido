@@ -2,7 +2,7 @@ export function connectToDatabase(name: string, currentVersion : undefined | num
     return new Promise((resolve, reject) => {
         const request = window.indexedDB.open(name, currentVersion);
 
-        request.addEventListener('success', () => resolve(request.result));
-        request.addEventListener('error', reject);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
     });
 }

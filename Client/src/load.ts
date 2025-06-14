@@ -16,24 +16,24 @@ import {toArray} from "./materializers/ToArray";
 import {find} from "./materializers/Find";
 import {insert} from "./mutators/Insert";
 
-class BlidoContext {
-    private getVersion: (database: string) => Promise<number>;
-    private all: (json: string) => Promise<boolean>;
-    private any: (json: string) => Promise<boolean>;
-    private average: (json: string) => Promise<number>;
-    private count: (json: string) => Promise<number>;
-    private first: (json: string) => Promise<unknown>;
-    private firstOrDefault: (json: string) => Promise<unknown>;
-    private last: (json: string) => Promise<unknown>;
-    private lastOrDefault: (json: string) => Promise<unknown>;
-    private max: (json: string) => Promise<number>;
-    private min: (json: string) => Promise<number>;
-    private single: (json: string) => Promise<unknown>;
-    private singleOrDefault: (json: string) => Promise<unknown>;
-    private sum: (json: string) => Promise<unknown>;
-    private toArray: (json: string) => Promise<unknown[]>;
-    private find: (json: string) => Promise<unknown>;
-    private insert: (json: string) => Promise<unknown>;
+export class BlidoContext {
+    public getVersion: (database: string) => Promise<number>;
+    public all: (json: string) => Promise<boolean>;
+    public any: (json: string) => Promise<boolean>;
+    public average: (json: string) => Promise<number>;
+    public count: (json: string) => Promise<number>;
+    public first: (json: string) => Promise<unknown>;
+    public firstOrDefault: (json: string) => Promise<unknown>;
+    public last: (json: string) => Promise<unknown>;
+    public lastOrDefault: (json: string) => Promise<unknown>;
+    public max: (json: string) => Promise<number>;
+    public min: (json: string) => Promise<number>;
+    public single: (json: string) => Promise<unknown>;
+    public singleOrDefault: (json: string) => Promise<unknown>;
+    public sum: (json: string) => Promise<unknown>;
+    public toArray: (json: string) => Promise<unknown[]>;
+    public find: (json: string) => Promise<unknown>;
+    public   insert: (json: string) => Promise<unknown>;
     public constructor() {
         this.firstOrDefault = firstOrDefault;
         this.getVersion = getVersion;
@@ -55,4 +55,11 @@ class BlidoContext {
     }
 }
 
-(window as any).blido = new BlidoContext();
+window.addEventListener("load", () => {
+    Object.defineProperty(window, "blido", {
+        value: new BlidoContext(),
+        writable: false,
+        configurable: false,
+        enumerable: true
+    });
+})

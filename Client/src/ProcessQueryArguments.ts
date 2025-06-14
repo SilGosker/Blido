@@ -11,6 +11,7 @@ export function processQueryArguments(json: string): QueryArguments {
     let matches = (_: unknown) => true;
     const hasFilters = !!(parsed.parsedExpressions && parsed.parsedExpressions.length);
     if (hasFilters) {
+        console.log(parsed.parsedExpressions);
         const functions = (parsed.parsedExpressions as string[]).map(x => eval(x));
         matches = (entity: unknown) => functions.every(x => x(entity));
     }

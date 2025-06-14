@@ -1,5 +1,5 @@
 import {processQueryArguments} from "../ProcessQueryArguments";
-import {startTransaction} from "../StartCursor";
+import {startTransaction} from "../StartTransaction";
 
 export function find(json: string) : Promise<number> {
     return new Promise(async (resolve, reject) => {

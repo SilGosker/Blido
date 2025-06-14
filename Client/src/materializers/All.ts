@@ -1,7 +1,7 @@
 import {processQueryArguments} from "../ProcessQueryArguments";
 import {startCursor} from "../StartCursor";
 
-export function all(json: string) : Promise<boolean> {
+export function all(json: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
         const args = processQueryArguments(json);
 

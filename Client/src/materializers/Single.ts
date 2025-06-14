@@ -6,7 +6,7 @@ export function single(json: string) : Promise<unknown> {
         const args = processQueryArguments(json);
         const request = await startCursor(args.databaseName, args.currentVersion, args.objectStoreName);
         let found = false;
-        let result = null;
+        let result: unknown = null;
 
         request.addEventListener('error', reject);
         request.addEventListener('success', () => {
@@ -27,8 +27,9 @@ export function single(json: string) : Promise<unknown> {
                     reject('More than one element satisfies the condition in predicate');
                     return;
                 }
+                found = true;
+                result = object;
             }
-
             cursor.continue();
         });
     });
